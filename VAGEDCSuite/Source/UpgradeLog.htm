@@ -1,0 +1,439 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+ <html xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><meta content="en-us" http-equiv="Content-Language" /><meta content="text/html; charset=utf-16" http-equiv="Content-Type" /><title _locID="ConversionReport0">
+          Rapport de migration
+        </title><style> 
+                    /* Body style, for the entire document */
+                    body
+                    {
+                        background: #F3F3F4;
+                        color: #1E1E1F;
+                        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    /* Header1 style, used for the main title */
+                    h1
+                    {
+                        padding: 10px 0px 10px 10px;
+                        font-size: 21pt;
+                        background-color: #E2E2E2;
+                        border-bottom: 1px #C1C1C2 solid; 
+                        color: #201F20;
+                        margin: 0;
+                        font-weight: normal;
+                    }
+
+                    /* Header2 style, used for "Overview" and other sections */
+                    h2
+                    {
+                        font-size: 18pt;
+                        font-weight: normal;
+                        padding: 15px 0 5px 0;
+                        margin: 0;
+                    }
+
+                    /* Header3 style, used for sub-sections, such as project name */
+                    h3
+                    {
+                        font-weight: normal;
+                        font-size: 15pt;
+                        margin: 0;
+                        padding: 15px 0 5px 0;
+                        background-color: transparent;
+                    }
+
+                    /* Color all hyperlinks one color */
+                    a
+                    {
+                        color: #1382CE;
+                    }
+
+                    /* Table styles */ 
+                    table
+                    {
+                        border-spacing: 0 0;
+                        border-collapse: collapse;
+                        font-size: 10pt;
+                    }
+
+                    table th
+                    {
+                        background: #E7E7E8;
+                        text-align: left;
+                        text-decoration: none;
+                        font-weight: normal;
+                        padding: 3px 6px 3px 6px;
+                    }
+
+                    table td
+                    {
+                        vertical-align: top;
+                        padding: 3px 6px 5px 5px;
+                        margin: 0px;
+                        border: 1px solid #E7E7E8;
+                        background: #F7F7F8;
+                    }
+
+                    /* Local link is a style for hyperlinks that link to file:/// content, there are lots so color them as 'normal' text until the user mouse overs */
+                    .localLink
+                    {
+                        color: #1E1E1F;
+                        background: #EEEEED;
+                        text-decoration: none;
+                    }
+
+                    .localLink:hover
+                    {
+                        color: #1382CE;
+                        background: #FFFF99;
+                        text-decoration: none;
+                    }
+
+                    /* Center text, used in the over views cells that contain message level counts */ 
+                    .textCentered
+                    {
+                        text-align: center;
+                    }
+
+                    /* The message cells in message tables should take up all avaliable space */
+                    .messageCell
+                    {
+                        width: 100%;
+                    }
+
+                    /* Padding around the content after the h1 */ 
+                    #content 
+                    {
+	                    padding: 0px 12px 12px 12px; 
+                    }
+
+                    /* The overview table expands to width, with a max width of 97% */ 
+                    #overview table
+                    {
+                        width: auto;
+                        max-width: 75%; 
+                    }
+
+                    /* The messages tables are always 97% width */
+                    #messages table
+                    {
+                        width: 97%;
+                    }
+
+                    /* All Icons */
+                    .IconSuccessEncoded, .IconInfoEncoded, .IconWarningEncoded, .IconErrorEncoded
+                    {
+                        min-width:18px;
+                        min-height:18px; 
+                        background-repeat:no-repeat;
+                        background-position:center;
+                    }
+
+                    /* Success icon encoded */
+                    .IconSuccessEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconSuccess#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABcElEQVR4Xq2TsUsCURzHv15g8ZJcBWlyiYYgCIWcb9DFRRwMW5TA2c0/QEFwFkxxUQdxVlBwCYWOi6IhWgQhBLHJUCkhLr/BW8S7gvrAg+N+v8/v+x68Z8MGy+XSCyABQAXgBgHGALoASkIIDWSLeLBetdHryMjd5IxQPWT4rn1c/P7+xxp72Cs9m5SZ0Bq2vPnbPFafK2zDvmNHypdC0BPkLlQhxJsCAhQoZwdZU5mwxh720qGo8MzTxTTKZDPCx2HoVzp6lz0Q9tKhyx0kGs8Ny+TkWRKk8lCROwEduhyg9l/6lunOPSfmH3NUH6uQ0KHLAe7JYvJjevm+DAMGJHToKtigE+vwvIidxLamb8IBY9e+C5LiXREkfho3TSd06HJA13/oh6T51MTsfQbHrsMynQ5dDihFjiK8JJAU9AKIWTp76dCVN7HWHrajmUEGvyF9nkbAE6gLIS7kTUyuf2gscLoJrElZo/Mvj+nPz/kLTmfnEwP3tB0AAAAASUVORK5CYII=);
+                    }
+
+                    /* Information icon encoded */
+                    .IconInfoEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconInformation#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR4Xs2TsUoDQRRF7wwoziokjZUKadInhdhukR9YP8DMX1hYW+QvdsXa/QHBbcXC7W0CamWTQnclFutceIQJwwaWNLlwm5k5d94M76mmaeCrrmsLYOocY12FcxZFUeozCqKqqgYA8uevv1H6VuPxcwlfk5N92KHBxfFeCSAxxswlYAW/Xr989x/mv9gkhtyMDhcAxgzRsp7flj8B/HF1RsMXq+NZMkopaHe7lbKxQUEIGbKsYNoGn969060hZBkQex/W8oRQwsQaW2o3Ago2SVcJUzAgY3N0lTCZZm+zPS8HB51gMmS1DEYyOz9acKO1D8JWTlafKIMxdhvlfdyT94Vv5h7P8Ky7nQzACmhvKq3zk3PjW9asz9D/1oigecsioooAAAAASUVORK5CYII=);
+                    }
+
+                    /* Warning icon encoded */
+                    .IconWarningEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconWarning#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAx0lEQVR4XpWSMQ7CMAxFf4xAyBMLCxMrO8dhaBcuwdCJS3RJBw7SA/QGTCxdWJgiQYWKXJWKIXHIlyw5lqr34tQgEOdcBsCOx5yZK3hCCKdYXneQkh4pEfqzLfu+wVDSyyzFoJjfz9NB+pAF+eizx2Vruts0k15mPgvS6GYvpVtQhB61IB/dk6AF6fS4Ben0uIX5odtFe8Q/eW1KvFeH4e8khT6+gm5B+t3juyDt7n0jpe+CANTd+oTUjN/U3yVaABnSUjFz/gFq44JaVSCXeQAAAABJRU5ErkJggg==);
+                    }
+
+                    /* Error icon encoded */
+                    .IconErrorEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconError#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQElEQVR4XqWTvUoEQRCE6wYPZUA80AfwAQz23uCMjA7MDRQEIzPBVEyNTQUFIw00vcQTTMzuAh/AxEQQT8HF/3G/oGGnEUGuoNnd6qoZuqltyKEsyzVJq5I6rnUp6SjGeGhESikzzlc1eL7opfuVbrqbU1Zw9NCgtQMaZpY0eNnaaL2fHusvTK5vKu7sjSS1Y4y3QUA6K3e3Mau5UFDyMP7tYF9o8cAHZv68vipoIJg971PZIZ5HiwdvYGGvFVFHmGmZ2MxwmQYPXubPl9Up0tfoMQGetXd6mRbvhBw+boZ6WF7Mbv1+GsHRk0fQmPAH1GfmZirbCfDJ61tw3Px8/8pZsPAG4jlVhcPgZ7adwNWBB68lkRQWFiTgFlbnLY3DGGM7izIJIyT/jjIvEJw6fdJTc6krDzh6aMwMP9bvDH4ADSsa9uSWVJkAAAAASUVORK5CYII=);
+                    }
+                 </style><script type="text/javascript" language="javascript"> 
+          
+            // Startup 
+            // Hook up the the loaded event for the document/window, to linkify the document content
+            var startupFunction = function() { linkifyElement("messages"); };
+            
+            if(window.attachEvent)
+            {
+              window.attachEvent('onload', startupFunction);
+            }
+            else if (window.addEventListener) 
+            {
+              window.addEventListener('load', startupFunction, false);
+            }
+            else 
+            {
+              document.addEventListener('load', startupFunction, false);
+            } 
+            
+            // Toggles the visibility of table rows with the specified name 
+            function toggleTableRowsByName(name)
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  if(!!currentName && currentName.indexOf(name) == 0)
+                  {
+                      var isVisible = allRows[i].style.display == ''; 
+                      isVisible ? allRows[i].style.display = 'none' : allRows[i].style.display = '';
+                  }
+               }
+            }
+            
+            function scrollToFirstVisibleRow(name) 
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  var isVisible = allRows[i].style.display == ''; 
+                  if(!!currentName && currentName.indexOf(name) == 0 && isVisible)
+                  {
+                     allRows[i].scrollIntoView(true); 
+                     return true; 
+                  }
+               }
+               
+               return false;
+            }
+            
+            // Linkifies the specified text content, replaces candidate links with html links 
+            function linkify(text)
+            {
+                 if(!text || 0 === text.length)
+                 {
+                     return text; 
+                 }
+
+                 // Find http, https and ftp links and replace them with hyper links 
+                 var urlLink = /(http|https|ftp)\:\/\/[a-zA-Z0-9\-\.]+(:[a-zA-Z0-9]*)?\/?([a-zA-Z0-9\-\._\?\,\/\\\+&%\$#\=~;\{\}])*/gi;
+                 
+                 return text.replace(urlLink, '<a href="$&">$&</a>') ;
+            }
+            
+            // Linkifies the specified element by ID
+            function linkifyElement(id)
+            {
+                var element = document.getElementById(id);
+                if(!!element)
+                {
+                  element.innerHTML = linkify(element.innerHTML); 
+                }
+            }
+            
+            function ToggleMessageVisibility(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              toggleTableRowsByName("MessageRowClass" + projectName);
+              toggleTableRowsByName('MessageRowHeaderShow' + projectName);
+              toggleTableRowsByName('MessageRowHeaderHide' + projectName); 
+            }
+            
+            function ScrollToFirstVisibleMessage(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              // First try the 'Show messages' row
+              if(!scrollToFirstVisibleRow('MessageRowHeaderShow' + projectName))
+              {
+                // Failed to find a visible row for 'Show messages', try an actual message row 
+                scrollToFirstVisibleRow('MessageRowClass' + projectName); 
+              }
+            }
+           </script></head><body><h1 _locID="ConversionReport">
+          Rapport de migration - VAGSuite</h1><div id="content"><h2 _locID="OverviewTitle">Vue d'ensemble</h2><div id="overview"><table><tr><th></th><th _locID="ProjectTableHeader">Projet</th><th _locID="PathTableHeader">Chemin d'accès</th><th _locID="ErrorsTableHeader">Erreurs</th><th _locID="WarningsTableHeader">Avertissements</th><th _locID="MessagesTableHeader">Messages</th></tr><tr><td class="IconErrorEncoded" /><td><strong><a href="#VAGSuite">VAGSuite</a></strong></td><td>VAGSuite.csproj</td><td class="textCentered"><a href="#VAGSuiteError">1</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('VAGSuite'); return false;">166</a></td></tr><tr><td class="IconWarningEncoded" /><td><strong><a href="#C:-Users-AGL-Documents-SOURCE-VAGEDCSuite-Source-VAGSuite.csproj">..\Source\VAGSuite.csproj</a></strong></td><td>VAGSuite.csproj</td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#C:-Users-AGL-Documents-SOURCE-VAGEDCSuite-Source-VAGSuite.csprojWarning">1</a></td><td class="textCentered"><a href="#">0</a></td></tr></table></div><h2 _locID="SolutionAndProjectsTitle">Solution et projets</h2><div id="messages"><a name="VAGSuite" /><h3>VAGSuite</h3><table><tr id="VAGSuiteHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Message</th></tr><tr name="ErrorRowClassVAGSuite"><td class="IconErrorEncoded"><a name="VAGSuiteError" /></td><td class="messageCell"><strong>Properties\licenses.licx:
+        </strong><span>Échec de la sauvegarde du fichier avec le nom C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Properties\licenses.licx</span></td></tr><tr name="MessageRowHeaderShowVAGSuite"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="VAGSuiteMessage" onclick="ToggleMessageVisibility('VAGSuite'); return false;">
+          Afficher 166 messages supplémentaires
+        </a></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>VAGSuite.csproj:
+        </strong><span>Fichier projet correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\VAGSuite.csproj</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>AppSettings.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\AppSettings.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>AxisHelper.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\AxisHelper.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>CellHelper.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\CellHelper.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>CellHelperCollection.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\CellHelperCollection.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ChecksumResultDetails.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ChecksumResultDetails.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>CodeBlock.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\CodeBlock.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>CompareResults.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\CompareResults.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>CompareResults.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\CompareResults.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ExcelInterface.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ExcelInterface.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSymbolSelect.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSymbolSelect.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSymbolSelect.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSymbolSelect.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MSA6FileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MSA6FileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15VM_checksum.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15VM_checksum.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15P6FileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15P6FileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15CFileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15CFileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC17FileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC17FileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinmerger.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinmerger.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinmerger.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinmerger.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBrowseFiles.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBrowseFiles.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBrowseFiles.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBrowseFiles.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmCodeBlocks.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmCodeBlocks.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmCodeBlocks.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmCodeBlocks.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Lines.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Lines.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MSA15FileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MSA15FileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlAirmassResult.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlAirmassResult.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlAirmassResult.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlAirmassResult.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlAxisEditor.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlAxisEditor.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlAxisEditor.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlAxisEditor.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlCompressorMap.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlCompressorMap.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlCompressorMap.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlCompressorMap.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlReleaseNotes.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlReleaseNotes.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlReleaseNotes.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlReleaseNotes.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15MFileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15MFileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15PFileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15PFileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15PTuner.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15PTuner.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15P_checksum.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15P_checksum.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15P_EEPROM.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15P_EEPROM.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC15VFileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC15VFileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>EDC16FileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\EDC16FileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>FormFind.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\FormFind.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>FormFindCancel.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\FormFindCancel.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>FormGoTo.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\FormGoTo.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmAbout.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmAbout.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmAbout.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmAbout.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinCompare.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinCompare.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinCompare.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinCompare.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmChangeNote.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmChangeNote.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmChangeNote.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmChangeNote.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmChecksumIncorrect.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmChecksumIncorrect.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmChecksumIncorrect.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmChecksumIncorrect.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmDecodeVIN.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmDecodeVIN.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmDecodeVIN.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmDecodeVIN.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmEast.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmEast.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmEast.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmEast.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmEEPromEditor.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmEEPromEditor.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmEEPromEditor.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmEEPromEditor.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmFirmwareInfo.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmFirmwareInfo.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmFirmwareInfo.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmFirmwareInfo.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmInfoBox.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmInfoBox.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmInfoBox.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmInfoBox.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmMain.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmMain.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmMain.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmMain.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartNumberList.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartNumberList.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartNumberList.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartNumberList.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartnumberLookup.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartnumberLookup.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartnumberLookup.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartnumberLookup.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProgress.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProgress.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProgress.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProgress.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectLogbook.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectLogbook.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectLogbook.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectLogbook.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectProperties.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectProperties.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectProperties.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectProperties.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectSelection.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectSelection.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectSelection.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectSelection.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectTransactionPurge.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectTransactionPurge.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectTransactionPurge.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectTransactionPurge.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmRebuildFileParameters.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmRebuildFileParameters.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmRebuildFileParameters.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmRebuildFileParameters.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSearchMaps.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSearchMaps.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSearchMaps.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSearchMaps.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSettings.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSettings.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSettings.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSettings.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSplash.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSplash.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSplash.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSplash.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmTransactionLog.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmTransactionLog.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmTransactionLog.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmTransactionLog.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmUpdateAvailable.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmUpdateAvailable.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmUpdateAvailable.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmUpdateAvailable.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>HexViewer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\HexViewer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>HexViewer.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\HexViewer.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>IEDCFileParser.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\IEDCFileParser.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MapSelector.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MapSelector.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MapViewerEx.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MapViewerEx.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MapViewerEx.designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MapViewerEx.designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MSA15_checksum.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MSA15_checksum.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>msiupdater.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\msiupdater.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>PartnumberCollection.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\PartnumberCollection.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>partNumberConverter.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\partNumberConverter.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>PerformanceResults.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\PerformanceResults.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ProfColorTable.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ProfColorTable.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Program.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Program.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ProjectLog.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ProjectLog.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Properties\AssemblyInfo.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Properties\AssemblyInfo.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Properties\Resources.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Properties\Resources.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Properties\Settings.Designer.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Properties\Settings.Designer.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ScannedFile.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ScannedFile.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>SortableCollectionBase.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\SortableCollectionBase.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>SymbolAxesTranslator.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\SymbolAxesTranslator.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>SymbolCollection.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\SymbolCollection.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>SymbolHelper.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\SymbolHelper.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>SymbolTranslator.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\SymbolTranslator.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Tools.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Tools.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>TransactionCollection.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\TransactionCollection.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>TransactionEntry.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\TransactionEntry.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>TransactionLog.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\TransactionLog.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>VINDecoder.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\VINDecoder.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>VListBox.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\VListBox.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>XDFWriter.cs:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\XDFWriter.cs</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Properties\Settings.settings:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Properties\Settings.settings</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>gnome.ico:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\gnome.ico</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>CompareResults.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\CompareResults.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlAirmassResult.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlAirmassResult.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlAxisEditor.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlAxisEditor.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlCompressorMap.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlCompressorMap.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>ctrlReleaseNotes.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\ctrlReleaseNotes.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>FormFind.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\FormFind.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>FormFindCancel.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\FormFindCancel.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>FormGoTo.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\FormGoTo.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmAbout.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmAbout.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinCompare.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinCompare.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinmerger.nl.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinmerger.nl.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBinmerger.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBinmerger.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmBrowseFiles.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmBrowseFiles.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmChangeNote.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmChangeNote.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmChecksumIncorrect.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmChecksumIncorrect.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmCodeBlocks.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmCodeBlocks.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmDecodeVIN.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmDecodeVIN.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmEast.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmEast.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmEEPromEditor.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmEEPromEditor.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmFirmwareInfo.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmFirmwareInfo.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmInfoBox.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmInfoBox.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmMain.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmMain.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartNumberList.nl.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartNumberList.nl.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartNumberList.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartNumberList.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartnumberLookup.nl.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartnumberLookup.nl.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmPartnumberLookup.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmPartnumberLookup.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProgress.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProgress.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectLogbook.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectLogbook.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectProperties.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectProperties.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectSelection.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectSelection.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmProjectTransactionPurge.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmProjectTransactionPurge.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmRebuildFileParameters.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmRebuildFileParameters.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSearchMaps.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSearchMaps.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSettings.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSettings.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSplash.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSplash.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmSymbolSelect.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmSymbolSelect.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmTransactionLog.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmTransactionLog.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>frmUpdateAvailable.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\frmUpdateAvailable.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>HexViewer.nl.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\HexViewer.nl.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>HexViewer.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\HexViewer.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>MapViewerEx.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\MapViewerEx.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>Properties\Resources.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\Properties\Resources.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>VListBox.resx:
+        </strong><span>Fichier correctement sauvegardé en tant que C:\Users\AGL\Documents\SOURCE\VAGEDCSuite\Source\Backup\VListBox.resx</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>VAGSuite.csproj:
+        </strong><span>Projet correctement migré</span></td></tr><tr name="MessageRowClassVAGSuite" style="display: none"><td class="IconInfoEncoded"><a name="VAGSuiteMessage" /></td><td class="messageCell"><strong>VAGSuite.csproj:
+        </strong><span>Analyse terminée : la migration n'est pas requise pour les fichiers projet.</span></td></tr><tr style="display: none" name="MessageRowHeaderHideVAGSuite"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="VAGSuiteMessage" onclick="ToggleMessageVisibility('VAGSuite'); return false;">
+          Masquer 166 messages supplémentaires
+        </a></td></tr></table><a name="C:-Users-AGL-Documents-SOURCE-VAGEDCSuite-Source-VAGSuite.csproj" /><h3>..\Source\VAGSuite.csproj</h3><table><tr id="C:-Users-AGL-Documents-SOURCE-VAGEDCSuite-Source-VAGSuite.csprojHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Message</th></tr><tr name="WarningRowClassC:-Users-AGL-Documents-SOURCE-VAGEDCSuite-Source-VAGSuite.csproj"><td class="IconWarningEncoded"><a name="C:-Users-AGL-Documents-SOURCE-VAGEDCSuite-Source-VAGSuite.csprojWarning" /></td><td class="messageCell"><strong>VAGSuite.csproj:
+        </strong><span>Le format du projet n'est plus pris en charge. La fonctionnalité permettant de convertir ce projet dans un format pris en charge sera supprimée dans la prochaine version de Visual Studio. Nous vous recommandons de stocker la version mise à niveau et de cesser d'utiliser la version d'origine non prise en charge. Plus d'informations : https://aka.ms/DeprecatedProjectConversion</span></td></tr></table></div></div></body></html>
