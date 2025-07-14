@@ -1,0 +1,28 @@
+{
+  "EDC15P": {
+    "Driver wish": {
+      "Address": 74565,
+      "Length": 128,
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Driver wish map",
+      "AlternativeNames": [
+        "Fahrerwunsch",
+        "Driver_wish"
+      ]
+    }
+  },
+  "BMW_DDE4": {
+    "Driver wish": {
+      "Address": 336918,
+      "Length": 668,
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Driver wish map for BMW E46",
+      "AlternativeNames": [
+        "FahrPedal_Kennfeld",
+        "Pedal_Map"
+      ]
+    }
+  }
+}

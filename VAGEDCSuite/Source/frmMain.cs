@@ -67,6 +67,10 @@ using DevExpress.Skins;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors;
 using System.Security.Cryptography;
+using System.Xml;
+using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 
 namespace VAGSuite
 {
@@ -128,6 +132,12 @@ namespace VAGSuite
 
         public DelegateStartReleaseNotePanel m_DelegateStartReleaseNotePanel;
         private frmSplash splash;
+
+        // Variables pour stocker les informations d'ECU actuelles
+        private string _currentECUType = "";
+        private string _currentCarMake = "";
+        private Dictionary<string, Dictionary<string, MapDefinition>> _mapDefinitions;
+
         public frmMain()
         {
             try
@@ -264,6 +274,8 @@ namespace VAGSuite
 
                     Tools.Instance.m_symbols = DetectMaps(Tools.Instance.m_currentfile, out Tools.Instance.codeBlockList, out Tools.Instance.AxisList, showMessage, true);
 
+                    LoadSymbolsFromBinaryFile(fileName, Tools.Instance.m_symbols);
+
                     gridControl1.DataSource = null;
                     Application.DoEvents();
                     gridControl1.DataSource = Tools.Instance.m_symbols;
@@ -291,11 +303,164 @@ namespace VAGSuite
             }
         }
 
-        
 
 
 
+        //####################################################################################################################################################################################
+        //####################################################################################################################################################################################
 
+
+        #region OLD VERSION OF DETECT MAPS
+        //private SymbolCollection DetectMaps(string filename, out List<CodeBlock> newCodeBlocks, out List<AxisHelper> newAxisHelpers, bool showMessage, bool isPrimaryFile)
+        //{
+        //    IEDCFileParser parser = Tools.Instance.GetParserForFile(filename, isPrimaryFile);
+        //    newCodeBlocks = new List<CodeBlock>();
+        //    newAxisHelpers = new List<AxisHelper>();
+        //    SymbolCollection newSymbols = new SymbolCollection();
+
+        //    if (parser != null)
+        //    {
+        //        byte[] allBytes = File.ReadAllBytes(filename);
+        //        string boschnumber = parser.ExtractBoschPartnumber(allBytes);
+        //        string softwareNumber = parser.ExtractSoftwareNumber(allBytes);
+        //        partNumberConverter pnc = new partNumberConverter();
+        //        ECUInfo info = pnc.ConvertPartnumber(boschnumber, allBytes.Length);
+
+        //        // Ajout d'un message de débogage pour voir le type d'ECU détecté
+        //        Console.WriteLine($"ECU détecté: Type={info.EcuType}, Marque={info.CarMake}, PartNumber={info.PartNumber}");
+
+        //        // Modification: Accepter plus de types d'ECU, y compris ceux utilisés par Audi
+        //        bool isAcceptedECU = info.EcuType.StartsWith("EDC15P") ||
+        //                             info.EcuType.StartsWith("EDC15VM") ||
+        //                             info.EcuType.StartsWith("EDC15") ||  // Pour les autres variantes EDC15
+        //                             info.EcuType.StartsWith("EDC16") ||  // Pour EDC16 utilisé dans certains Audi
+        //                             info.EcuType.StartsWith("ME7") ||    // Pour ME7 utilisé dans les Audi essence
+        //                             info.CarMake.Contains("AUDI");       // Accepter explicitement si c'est un Audi
+
+        //        // Afficher message d'information sans bloquer le processus
+        //        if (!isAcceptedECU && info.EcuType != string.Empty && showMessage)
+        //        {
+        //            // Changer le message pour être informatif plutôt que bloquant
+        //            Console.WriteLine($"Note: Type d'ECU non standard détecté [{info.EcuType}] dans {Path.GetFileName(filename)}. Tentative de traitement quand même.");
+        //            // Optionnel: Afficher un message mais continuer le traitement
+        //            if (showMessage)
+        //            {
+        //                frmInfoBox infobx = new frmInfoBox($"Type d'ECU non standard [{info.EcuType}] détecté. Le programme essaiera de traiter ce fichier quand même.");
+        //            }
+        //        }
+
+        //        if (info.EcuType == string.Empty)
+        //        {
+        //            Console.WriteLine("Numéro de pièce " + info.PartNumber + " inconnu " + filename);
+        //        }
+
+        //        if (isPrimaryFile)
+        //        {
+        //            string partNo = parser.ExtractPartnumber(allBytes);
+        //            partNo = Tools.Instance.StripNonAscii(partNo);
+        //            softwareNumber = Tools.Instance.StripNonAscii(softwareNumber);
+        //            barPartnumber.Caption = partNo + " " + softwareNumber;
+
+        //            // Ajout d'information Audi-spécifique si détecté
+        //            string carInfo = info.CarMake;
+        //            if (info.CarMake.Contains("AUDI") || boschnumber.Contains("AUDI"))
+        //            {
+        //                carInfo = "AUDI " + carInfo;
+        //            }
+        //            barAdditionalInfo.Caption = info.PartNumber + " " + carInfo + " " + info.EcuType + " " + parser.ExtractInfo(allBytes);
+        //        }
+
+        //        // Toujours essayer de parser le fichier, même pour les ECU non standard
+        //        newSymbols = parser.parseFile(filename, out newCodeBlocks, out newAxisHelpers);
+        //        newSymbols.SortColumn = "Flash_start_address";
+        //        newSymbols.SortingOrder = GenericComparer.SortOrder.Ascending;
+        //        newSymbols.Sort();
+        //        //parser.NameKnownMaps(allBytes, newSymbols, newCodeBlocks);
+        //        //parser.FindSVBL(allBytes, filename, newSymbols, newCodeBlocks);
+        //        /*SymbolTranslator strans = new SymbolTranslator();
+        //        foreach (SymbolHelper sh in newSymbols)
+        //        {
+        //            sh.Description = strans.TranslateSymbolToHelpText(sh.Varname);
+        //        }*/
+        //        // check for must have maps... if there are maps missing, report it
+        //        // Vérification des cartes manquantes avec ajustement pour Audi
+        //        if (showMessage && (parser is EDC15PFileParser || parser is EDC15P6FileParser || info.CarMake.Contains("AUDI")))
+        //        {
+        //            string _message = string.Empty;
+        //            if (MapsWithNameMissing("EGR", newSymbols)) _message += "EGR maps missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("SVBL", newSymbols)) _message += "SVBL missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Torque limiter", newSymbols)) _message += "Torque limiter missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Smoke limiter", newSymbols)) _message += "Smoke limiter missing" + Environment.NewLine;
+        //            //if (MapsWithNameMissing("IQ by MAF limiter", newSymbols)) _message += "IQ by MAF limiter missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Injector duration", newSymbols)) _message += "Injector duration maps missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Start of injection", newSymbols)) _message += "Start of injection maps missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("N75 duty cycle", newSymbols)) _message += "N75 duty cycle map missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Inverse driver wish", newSymbols)) _message += "Inverse driver wish map missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Boost target map", newSymbols)) _message += "Boost target map missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("SOI limiter", newSymbols)) _message += "SOI limiter missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Driver wish", newSymbols)) _message += "Driver wish map missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("Boost limit map", newSymbols)) _message += "Boost limit map missing" + Environment.NewLine;
+
+        //            if (MapsWithNameMissing("MAF correction", newSymbols)) _message += "MAF correction map missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("MAF linearization", newSymbols)) _message += "MAF linearization map missing" + Environment.NewLine;
+        //            if (MapsWithNameMissing("MAP linearization", newSymbols)) _message += "MAP linearization map missing" + Environment.NewLine;
+        //            if (_message != string.Empty)
+        //            {
+        //                frmInfoBox infobx = new frmInfoBox(_message);
+        //            }
+        //        }
+
+        //        if (MapsWithNameMissing("Driver wish", newSymbols))
+        //        {
+        //            string _message = string.Empty;
+        //            // Chercher les alternatives Audi pour Driver wish
+        //            if (MapsWithNameMissing("Driver_wish", newSymbols) &&
+        //                MapsWithNameMissing("DriverWish", newSymbols) &&
+        //                MapsWithNameMissing("Audi driver wish", newSymbols))
+        //            {
+        //                _message += "Driver wish map missing" + Environment.NewLine;
+        //            }
+        //        }
+        //        if (isPrimaryFile)
+        //        {
+        //            barSymCount.Caption = newSymbols.Count.ToString() + " symbols";
+
+        //            if (MapsWithNameMissing("Launch control map", newSymbols))
+        //            {
+        //                btnActivateLaunchControl.Enabled = true;
+        //            }
+        //            else
+        //            {
+        //                btnActivateLaunchControl.Enabled = false;
+        //            }
+        //            btnActivateSmokeLimiters.Enabled = false;
+        //            try
+        //            {
+        //                if (Tools.Instance.codeBlockList.Count > 0)
+        //                {
+        //                    if ((GetMapCount("Smoke limiter", newSymbols) / Tools.Instance.codeBlockList.Count) == 1)
+        //                    {
+        //                        btnActivateSmokeLimiters.Enabled = true;
+        //                    }
+        //                    else
+        //                    {
+        //                        btnActivateSmokeLimiters.Enabled = false;
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception)
+        //            {
+
+        //            }
+        //        }
+        //    }
+        //    return newSymbols;
+
+        //}
+
+        #endregion
+
+        #region
         private SymbolCollection DetectMaps(string filename, out List<CodeBlock> newCodeBlocks, out List<AxisHelper> newAxisHelpers, bool showMessage, bool isPrimaryFile)
         {
             IEDCFileParser parser = Tools.Instance.GetParserForFile(filename, isPrimaryFile);
@@ -311,33 +476,11 @@ namespace VAGSuite
                 partNumberConverter pnc = new partNumberConverter();
                 ECUInfo info = pnc.ConvertPartnumber(boschnumber, allBytes.Length);
 
-                // Ajout d'un message de débogage pour voir le type d'ECU détecté
-                Console.WriteLine($"ECU détecté: Type={info.EcuType}, Marque={info.CarMake}, PartNumber={info.PartNumber}");
+                // Détection améliorée du type d'ECU
+                string ecuType = DetermineECUType(allBytes, info);
 
-                // Modification: Accepter plus de types d'ECU, y compris ceux utilisés par Audi
-                bool isAcceptedECU = info.EcuType.StartsWith("EDC15P") ||
-                                     info.EcuType.StartsWith("EDC15VM") ||
-                                     info.EcuType.StartsWith("EDC15") ||  // Pour les autres variantes EDC15
-                                     info.EcuType.StartsWith("EDC16") ||  // Pour EDC16 utilisé dans certains Audi
-                                     info.EcuType.StartsWith("ME7") ||    // Pour ME7 utilisé dans les Audi essence
-                                     info.CarMake.Contains("AUDI");       // Accepter explicitement si c'est un Audi
-
-                // Afficher message d'information sans bloquer le processus
-                if (!isAcceptedECU && info.EcuType != string.Empty && showMessage)
-                {
-                    // Changer le message pour être informatif plutôt que bloquant
-                    Console.WriteLine($"Note: Type d'ECU non standard détecté [{info.EcuType}] dans {Path.GetFileName(filename)}. Tentative de traitement quand même.");
-                    // Optionnel: Afficher un message mais continuer le traitement
-                    if (showMessage)
-                    {
-                        frmInfoBox infobx = new frmInfoBox($"Type d'ECU non standard [{info.EcuType}] détecté. Le programme essaiera de traiter ce fichier quand même.");
-                    }
-                }
-
-                if (info.EcuType == string.Empty)
-                {
-                    Console.WriteLine("Numéro de pièce " + info.PartNumber + " inconnu " + filename);
-                }
+                // Charge les définitions d'adresses pour cette marque et ce type d'ECU
+                LoadAddressDefinitions(ecuType, info.CarMake);
 
                 if (isPrimaryFile)
                 {
@@ -345,103 +488,346 @@ namespace VAGSuite
                     partNo = Tools.Instance.StripNonAscii(partNo);
                     softwareNumber = Tools.Instance.StripNonAscii(softwareNumber);
                     barPartnumber.Caption = partNo + " " + softwareNumber;
-
-                    // Ajout d'information Audi-spécifique si détecté
-                    string carInfo = info.CarMake;
-                    if (info.CarMake.Contains("AUDI") || boschnumber.Contains("AUDI"))
-                    {
-                        carInfo = "AUDI " + carInfo;
-                    }
-                    barAdditionalInfo.Caption = info.PartNumber + " " + carInfo + " " + info.EcuType + " " + parser.ExtractInfo(allBytes);
+                    barAdditionalInfo.Caption = info.PartNumber + " " + info.CarMake + " " + ecuType + " " + parser.ExtractInfo(allBytes);
                 }
 
-                // Toujours essayer de parser le fichier, même pour les ECU non standard
+                // Tente de parser le fichier
                 newSymbols = parser.parseFile(filename, out newCodeBlocks, out newAxisHelpers);
                 newSymbols.SortColumn = "Flash_start_address";
                 newSymbols.SortingOrder = GenericComparer.SortOrder.Ascending;
                 newSymbols.Sort();
-                //parser.NameKnownMaps(allBytes, newSymbols, newCodeBlocks);
-                //parser.FindSVBL(allBytes, filename, newSymbols, newCodeBlocks);
-                /*SymbolTranslator strans = new SymbolTranslator();
-                foreach (SymbolHelper sh in newSymbols)
-                {
-                    sh.Description = strans.TranslateSymbolToHelpText(sh.Varname);
-                }*/
-                // check for must have maps... if there are maps missing, report it
-                // Vérification des cartes manquantes avec ajustement pour Audi
-                if (showMessage && (parser is EDC15PFileParser || parser is EDC15P6FileParser || info.CarMake.Contains("AUDI")))
-                {
-                    string _message = string.Empty;
-                    if (MapsWithNameMissing("EGR", newSymbols)) _message += "EGR maps missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("SVBL", newSymbols)) _message += "SVBL missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Torque limiter", newSymbols)) _message += "Torque limiter missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Smoke limiter", newSymbols)) _message += "Smoke limiter missing" + Environment.NewLine;
-                    //if (MapsWithNameMissing("IQ by MAF limiter", newSymbols)) _message += "IQ by MAF limiter missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Injector duration", newSymbols)) _message += "Injector duration maps missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Start of injection", newSymbols)) _message += "Start of injection maps missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("N75 duty cycle", newSymbols)) _message += "N75 duty cycle map missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Inverse driver wish", newSymbols)) _message += "Inverse driver wish map missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Boost target map", newSymbols)) _message += "Boost target map missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("SOI limiter", newSymbols)) _message += "SOI limiter missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Driver wish", newSymbols)) _message += "Driver wish map missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("Boost limit map", newSymbols)) _message += "Boost limit map missing" + Environment.NewLine;
 
-                    if (MapsWithNameMissing("MAF correction", newSymbols)) _message += "MAF correction map missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("MAF linearization", newSymbols)) _message += "MAF linearization map missing" + Environment.NewLine;
-                    if (MapsWithNameMissing("MAP linearization", newSymbols)) _message += "MAP linearization map missing" + Environment.NewLine;
-                    if (_message != string.Empty)
-                    {
-                        frmInfoBox infobx = new frmInfoBox(_message);
-                    }
+                // Vérifie les cartes manquantes mais continue quand même
+                if (showMessage)
+                {
+                    CheckMissingMaps(newSymbols, ecuType, info.CarMake);
                 }
 
-                if (MapsWithNameMissing("Driver wish", newSymbols))
-                {
-                    string _message = string.Empty;
-                    // Chercher les alternatives Audi pour Driver wish
-                    if (MapsWithNameMissing("Driver_wish", newSymbols) &&
-                        MapsWithNameMissing("DriverWish", newSymbols) &&
-                        MapsWithNameMissing("Audi driver wish", newSymbols))
-                    {
-                        _message += "Driver wish map missing" + Environment.NewLine;
-                    }
-                }
+         
                 if (isPrimaryFile)
                 {
                     barSymCount.Caption = newSymbols.Count.ToString() + " symbols";
+                    // Appel sans paramètres
+                    UpdateButtonStates();
+                }
 
-                    if (MapsWithNameMissing("Launch control map", newSymbols))
+            }
+            if (isPrimaryFile)
+            {
+                LoadCreatedMaps(filename, newSymbols);
+            }
+
+            //return newSymbols;
+            return newSymbols;
+        }
+
+        private void LoadCreatedMaps(string filename, SymbolCollection symbols)
+        {
+            // Chemin vers le fichier de métadonnées
+            string metadataPath = Path.Combine(
+                Path.GetDirectoryName(filename),
+                Path.GetFileNameWithoutExtension(filename) + "_metadata.xml"
+            );
+
+            if (File.Exists(metadataPath))
+            {
+                try
+                {
+                    System.Data.DataTable dt = new System.Data.DataTable();
+                    dt.ReadXml(metadataPath);
+
+                    foreach (DataRow row in dt.Rows)
                     {
-                        btnActivateLaunchControl.Enabled = true;
-                    }
-                    else
-                    {
-                        btnActivateLaunchControl.Enabled = false;
-                    }
-                    btnActivateSmokeLimiters.Enabled = false;
-                    try
-                    {
-                        if (Tools.Instance.codeBlockList.Count > 0)
+                        // Vérifier si cette carte existe déjà dans la collection
+                        bool exists = false;
+                        int address = Convert.ToInt32(row["FLASHADDRESS"]);
+
+                        foreach (SymbolHelper existing in symbols)
                         {
-                            if ((GetMapCount("Smoke limiter", newSymbols) / Tools.Instance.codeBlockList.Count) == 1)
+                            if (existing.Flash_start_address == address)
                             {
-                                btnActivateSmokeLimiters.Enabled = true;
-                            }
-                            else
-                            {
-                                btnActivateSmokeLimiters.Enabled = false;
+                                exists = true;
+                                break;
                             }
                         }
-                    }
-                    catch (Exception)
-                    {
 
+                        // Si la carte n'existe pas, l'ajouter
+                        if (!exists)
+                        {
+                            SymbolHelper symbol = new SymbolHelper();
+                            symbol.Varname = row["SYMBOLNAME"].ToString();
+                            symbol.Flash_start_address = address;
+                            symbol.Length = Convert.ToInt32(row["LENGTH"]);
+                            symbol.X_axis_length = Convert.ToInt32(row["XAXISLEN"]);
+                            symbol.Y_axis_length = Convert.ToInt32(row["YAXISLEN"]);
+
+                            if (row.Table.Columns.Contains("XAXISADDR"))
+                                symbol.X_axis_address = Convert.ToInt32(row["XAXISADDR"]);
+
+                            if (row.Table.Columns.Contains("YAXISADDR"))
+                                symbol.Y_axis_address = Convert.ToInt32(row["YAXISADDR"]);
+
+                            if (row.Table.Columns.Contains("XAXISDESCR"))
+                                symbol.X_axis_descr = row["XAXISDESCR"].ToString();
+
+                            if (row.Table.Columns.Contains("YAXISDESCR"))
+                                symbol.Y_axis_descr = row["YAXISDESCR"].ToString();
+
+                            if (row.Table.Columns.Contains("ZAXISDESCR"))
+                                symbol.Z_axis_descr = row["ZAXISDESCR"].ToString();
+
+                            if (row.Table.Columns.Contains("CORRECTION"))
+                                symbol.Correction = Convert.ToDouble(row["CORRECTION"]);
+                            else
+                                symbol.Correction = 1.0;
+
+                            if (row.Table.Columns.Contains("OFFSET"))
+                                symbol.Offset = Convert.ToDouble(row["OFFSET"]);
+                            else
+                                symbol.Offset = 0.0;
+
+                            if (row.Table.Columns.Contains("CATEGORY"))
+                                symbol.Category = row["CATEGORY"].ToString();
+
+                            if (row.Table.Columns.Contains("SUBCATEGORY"))
+                                symbol.Subcategory = row["SUBCATEGORY"].ToString();
+
+                            symbols.Add(symbol);
+                            Console.WriteLine("Carte créée chargée: " + symbol.Varname);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Erreur lors du chargement des cartes créées: " + ex.Message);
+                }
+            }
+        }
+        #endregion
+        // ######################################################################################################################################################################################################
+        private void CheckMissingMaps(SymbolCollection symbols, string ecuType, string carMake)
+        {
+            string _message = string.Empty;
+
+            // Liste des cartes essentielles à vérifier
+            string[] essentialMaps = new string[] {
+                "Driver wish", "Torque limiter", "Smoke limiter", "Target boost",
+                "Boost pressure limiter", "SVBL", "EGR", "Injector duration",
+                "Start of injection", "N75 duty cycle"
+            };
+
+            // Vérification pour chaque carte
+            foreach (string map in essentialMaps)
+            {
+                if (MapsWithNameMissing(map, symbols))
+                {
+                    _message += map + " maps missing" + Environment.NewLine;
+                }
+            }
+
+            // Afficher message si des cartes sont manquantes
+            if (_message != string.Empty)
+            {
+                frmInfoBox infobx = new frmInfoBox(_message);
+            }
+        }
+
+        // Structure pour les définitions de cartes
+        private struct MapDefinition
+        {
+            public int Address;
+            public int Length;
+            public int Columns;
+            public int Rows;
+            public string Description;
+            public List<string> AlternativeNames;
+        }
+
+        // Charge les définitions d'adresses depuis le fichier JSON
+        private void LoadAddressDefinitions(string ecuType, string carMake)
+        {
+            _currentECUType = ecuType;
+            _currentCarMake = carMake;
+            _mapDefinitions = new Dictionary<string, Dictionary<string, MapDefinition>>();
+
+            try
+            {
+                string definitionsFile = Path.Combine(Application.StartupPath, "MapDefinitions.json");
+                if (File.Exists(definitionsFile))
+                {
+                    string jsonContent = File.ReadAllText(definitionsFile);
+                    _mapDefinitions = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, MapDefinition>>>(jsonContent);
+                }
+                
+                else
+                {
+                    // Créer un fichier par défaut avec les définitions VAG
+                    CreateDefaultDefinitionsFile(definitionsFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur lors du chargement des définitions: " + ex.Message);
+            }
+        }
+        private void CreateDefaultDefinitionsFile(string filePath)
+        {
+            var defaultDefs = new Dictionary<string, Dictionary<string, MapDefinition>>();
+
+            // Ajout des définitions VAG
+            var vagMaps = new Dictionary<string, MapDefinition>();
+            vagMaps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x12345, // Exemple d'adresse
+                Length = 128,
+                Columns = 16,
+                Rows = 8,
+                Description = "Driver wish map",
+                AlternativeNames = new List<string> { "Fahrerwunsch", "Driver_wish" }
+            };
+            // Ajouter d'autres cartes VAG...
+
+            defaultDefs["EDC15P"] = vagMaps;
+
+            // Ajout des définitions BMW
+            var bmwMaps = new Dictionary<string, MapDefinition>();
+            bmwMaps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x52416,
+                Length = 0x29C,
+                Columns = 16,
+                Rows = 12,
+                Description = "Driver wish map for BMW E46",
+                AlternativeNames = new List<string> { "FahrPedal_Kennfeld", "Pedal_Map" }
+            };
+            // Ajouter d'autres cartes BMW...
+
+            defaultDefs["BMW_DDE4"] = bmwMaps;
+
+            // Ajouter d'autres marques...
+
+            // Sauvegarder le fichier
+            string jsonContent = JsonConvert.SerializeObject(defaultDefs, Newtonsoft.Json.Formatting.Indented);
+
+            File.WriteAllText(filePath, jsonContent);
+        }
+
+        // Obtient l'adresse d'une carte spécifique pour l'ECU actuel
+        private int GetMapAddress(string mapName)
+        {
+            // Vérifier si nous avons des définitions pour ce type d'ECU
+            if (_mapDefinitions.ContainsKey(_currentECUType))
+            {
+                var ecuMaps = _mapDefinitions[_currentECUType];
+
+                // Vérifier si cette carte existe pour cet ECU
+                if (ecuMaps.ContainsKey(mapName))
+                {
+                    return ecuMaps[mapName].Address;
+                }
+
+                // Vérifier les noms alternatifs
+                foreach (var map in ecuMaps)
+                {
+                    if (map.Value.AlternativeNames.Contains(mapName))
+                    {
+                        return map.Value.Address;
                     }
                 }
             }
-            return newSymbols;
 
+            // Si aucune adresse n'est trouvée, retourner 0
+            return 0;
         }
+
+        // Nouvelle méthode pour déterminer le type d'ECU
+        private string DetermineECUType(byte[] fileBytes, ECUInfo basicInfo)
+        {
+            string ecuType = basicInfo.EcuType;
+
+            // Si c'est un BMW
+            if (basicInfo.CarMake.Contains("BMW"))
+            {
+                if (SearchForSignature(fileBytes, "BOSCH DDE4.0"))
+                    return "BMW_DDE4";
+                if (SearchForSignature(fileBytes, "EDC16 BMW") || SearchForSignature(fileBytes, "MSD8"))
+                    return "BMW_DDE5";
+                if (SearchForSignature(fileBytes, "EDC17 BMW"))
+                    return "BMW_DDE6";
+
+                // Estimation par taille
+                if (fileBytes.Length <= 524288) // 512Ko
+                    return "BMW_DDE3_4";
+                else if (fileBytes.Length <= 1048576) // 1Mo
+                    return "BMW_DDE4_5";
+                else
+                    return "BMW_DDE5_6_7";
+            }
+
+            // Si c'est un Audi mais pas détecté comme EDC15P
+            if (basicInfo.CarMake.Contains("AUDI") && !ecuType.StartsWith("EDC15P"))
+            {
+                // Détection spécifique pour Audi
+                if (SearchForSignature(fileBytes, "EDC16"))
+                    return "AUDI_EDC16";
+                if (SearchForSignature(fileBytes, "EDC17"))
+                    return "AUDI_EDC17";
+                if (SearchForSignature(fileBytes, "MED"))
+                    return "AUDI_MED";
+            }
+
+            // Retourne le type par défaut si aucun match spécifique
+            return ecuType;
+        }
+
+
+
+        // Méthode pour trouver un symbole 3D aléatoire
+        private SymbolHelper GetRandom3DSymbol(SymbolCollection symbols)
+        {
+            List<SymbolHelper> symbols3D = new List<SymbolHelper>();
+
+            // Récupérer tous les symboles 3D
+            foreach (SymbolHelper sh in symbols)
+            {
+                if (sh.Varname.StartsWith("3D") && sh.Flash_start_address > 0)
+                {
+                    symbols3D.Add(sh);
+                }
+            }
+
+            // Si aucun symbole 3D n'est trouvé, retourner null
+            if (symbols3D.Count == 0)
+                return null;
+
+            // Générer un index aléatoire et retourner le symbole correspondant
+            Random random = new Random();
+            int randomIndex = random.Next(0, symbols3D.Count);
+            return symbols3D[randomIndex];
+        }
+
+        // Méthode pour rechercher une signature dans le fichier
+        private bool SearchForSignature(byte[] fileBytes, string signature)
+        {
+            byte[] signatureBytes = Encoding.ASCII.GetBytes(signature);
+            for (int i = 0; i < fileBytes.Length - signatureBytes.Length; i++)
+            {
+                bool found = true;
+                for (int j = 0; j < signatureBytes.Length; j++)
+                {
+                    if (fileBytes[i + j] != signatureBytes[j])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                    return true;
+            }
+            return false;
+        }
+
+
 
         private int GetMapCount(string varName, SymbolCollection newSymbols)
         {
@@ -463,38 +849,129 @@ namespace VAGSuite
         //}
 
         // Fonction modifiée pour rechercher les cartes avec différentes variantes de noms (pour Audi)
+        //private bool MapsWithNameMissing(string mapName, SymbolCollection symbols)
+        //{
+        //    // Créer une liste de variantes possibles pour les noms de cartes Audi
+        //    List<string> possibleNames = new List<string>
+        //    {
+        //        mapName,
+        //        mapName.Replace(" ", "_"),
+        //        mapName.Replace(" ", ""),
+        //        "Audi " + mapName,
+        //        // Ajoutez des alternatives spécifiques selon le type de carte
+        //        mapName == "Torque limiter" ? "Engine_torque_limit" : "",
+        //        mapName == "Torque limiter" ? "Maximum_torque" : "",
+        //        mapName == "Smoke limiter" ? "Smoke_control" : "",
+        //    };
+
+        //    // Filtrer les chaînes vides
+        //    possibleNames = possibleNames.Where(n => !string.IsNullOrEmpty(n)).ToList();
+
+        //    // Vérifier si l'une des variantes est présente
+        //    foreach (string name in possibleNames)
+        //    {
+        //        foreach (SymbolHelper sh in symbols)
+        //        {
+        //            // Recherche plus flexible
+        //            if (sh.Varname.Contains(name) || sh.Userdescription.Contains(name))
+        //            {
+        //                return false; // Trouvé, donc pas manquant
+        //            }
+        //        }
+        //    }
+        //    return true; // Aucune variante trouvée, donc manquant
+        //}
+
         private bool MapsWithNameMissing(string mapName, SymbolCollection symbols)
         {
-            // Créer une liste de variantes possibles pour les noms de cartes Audi
-            List<string> possibleNames = new List<string>
+            // Créer différentes variations du nom
+            List<string> nameVariations = new List<string>
             {
                 mapName,
                 mapName.Replace(" ", "_"),
                 mapName.Replace(" ", ""),
-                "Audi " + mapName,
-                // Ajoutez des alternatives spécifiques selon le type de carte
-                mapName == "Torque limiter" ? "Engine_torque_limit" : "",
-                mapName == "Torque limiter" ? "Maximum_torque" : "",
-                mapName == "Smoke limiter" ? "Smoke_control" : "",
+                mapName ,
+                mapName.ToLower(),
+                mapName.ToUpper()
             };
 
-            // Filtrer les chaînes vides
-            possibleNames = possibleNames.Where(n => !string.IsNullOrEmpty(n)).ToList();
-
-            // Vérifier si l'une des variantes est présente
-            foreach (string name in possibleNames)
+            // Vérifier chaque symbole pour toutes les variations de nom
+            foreach (SymbolHelper sh in symbols)
             {
-                foreach (SymbolHelper sh in symbols)
+                foreach (string variation in nameVariations)
                 {
-                    // Recherche plus flexible
-                    if (sh.Varname.Contains(name) || sh.Userdescription.Contains(name))
+                    // Recherche plus flexible dans le nom et la description
+                    if (sh.Varname.IndexOf(variation, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        sh.Userdescription.IndexOf(variation, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        return false; // Trouvé, donc pas manquant
+                        return false; // Carte trouvée
                     }
                 }
             }
-            return true; // Aucune variante trouvée, donc manquant
+
+            return true; // Carte non trouvée
         }
+        private List<string> GetAlternativeMapNames(string mapName, string ecuType, string carMake)
+        {
+            List<string> names = new List<string>();
+
+            // Noms de base (pour tous les ECU)
+            names.Add(mapName.Replace(" ", "_"));
+            names.Add(mapName.Replace(" ", ""));
+
+            // Ajout des noms spécifiques par type d'ECU
+            if (ecuType.Contains("BMW") || carMake.Contains("BMW"))
+            {
+                switch (mapName)
+                {
+                    case "Driver wish":
+                        names.AddRange(new[] { "FahrPedal_Kennfeld", "Pedal_Map", "Gaspedalkennlinie" });
+                        break;
+                    case "Torque limiter":
+                        names.AddRange(new[] { "Drehmoment_Begrenzer", "MaxDrehmoment", "Drehmomentbegrenzung" });
+                        break;
+                    case "Smoke limiter":
+                        names.AddRange(new[] { "Rauchbegrenzung", "Smoke_Control", "RauchKennfeld" });
+                        break;
+                    case "Target boost":
+                        names.AddRange(new[] { "Ladedruck_Sollwert", "Boost_Target", "SollLadedruck" });
+                        break;
+                    case "Boost pressure limiter":
+                        names.AddRange(new[] { "Ladedruck_Begrenzung", "MaxLadedruck" });
+                        break;
+                    case "EGR":
+                        names.AddRange(new[] { "AGR_Kennfeld", "Exhaust_Gas_Recirculation", "AGR_Rate" });
+                        break;
+                }
+            }
+            else if (ecuType.Contains("AUDI") || carMake.Contains("AUDI"))
+            {
+                switch (mapName)
+                {
+                    case "Driver wish":
+                        names.AddRange(new[] { "Fahrerwunsch", "Audi_Driver_Wish", "Kennfeld_Fahrpedal" });
+                        break;
+                    case "Torque limiter":
+                        names.AddRange(new[] { "Audi_Torque_Limiter", "Maximum_Torque", "Drehmoment_Max" });
+                        break;
+                    case "Smoke limiter":
+                        names.AddRange(new[] { "Audi_Smoke_Limiter", "Smoke_Control", "Rauch_Begrenzung" });
+                        break;
+                    case "Target boost":
+                        names.AddRange(new[] { "Audi_Target_Boost", "Soll_Ladedruck", "Requested_Boost" });
+                        break;
+                    case "Boost pressure limiter":
+                        names.AddRange(new[] { "Audi_Boost_Limiter", "Max_Boost", "Ladedruck_Max" });
+                        break;
+                    case "EGR":
+                        names.AddRange(new[] { "Audi_EGR", "Abgasrückführung", "AGR_Kennfeld" });
+                        break;
+                }
+            }
+
+            return names;
+        }
+
 
 
 
@@ -1667,60 +2144,592 @@ namespace VAGSuite
         }
 
 
+        //private void StartTableViewer(string symbolname, int codeblock)
+        //{
+        //    int rtel = 0;
+        //    bool _vwrstarted = false;
+        //    TableViewerStarted = false;
+        //    try
+        //    {
+        //        // Créer une liste de noms alternatifs pour les cartes Audi
+        //        List<string> alternativeNames = new List<string>
+        //        {
+        //            symbolname,
+        //            symbolname.Replace(" ", "_"),
+        //            symbolname.Replace(" ", ""),
+        //            "Audi " + symbolname
+        //        };
+
+        //        bool symbolFound = false;
+        //        foreach (string altName in alternativeNames)
+        //        {
+        //            if (Tools.Instance.GetSymbolAddressLike(Tools.Instance.m_symbols, altName) > 0)
+        //            {
+        //                symbolFound = true;
+        //                gridViewSymbols.ActiveFilter.Clear();
+        //                gridViewSymbols.ApplyFindFilter("");
+        //                SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
+        //                rtel = 0;
+
+        //                // Rechercher d'abord par Varname
+        //                foreach (SymbolHelper sh in sc)
+        //                {
+        //                    if (sh.Varname.StartsWith(altName) && sh.CodeBlock == codeblock)
+        //                    {
+        //                        try
+        //                        {
+        //                            SélectionnerSymbole(rtel);
+        //                            _vwrstarted = true;
+        //                            StartTableViewer();
+        //                            break;
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                        }
+        //                    }
+        //                    rtel++;
+        //                }
+
+        //                // Si non trouvé, rechercher par Userdescription
+        //                if (!_vwrstarted)
+        //                {
+        //                    rtel = 0;
+        //                    foreach (SymbolHelper sh in sc)
+        //                    {
+        //                        if (sh.Userdescription.StartsWith(altName) && sh.CodeBlock == codeblock)
+        //                        {
+        //                            try
+        //                            {
+        //                                SélectionnerSymbole(rtel);
+        //                                _vwrstarted = true;
+        //                                StartTableViewer();
+        //                                break;
+        //                            }
+        //                            catch (Exception ex)
+        //                            {
+        //                                MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                            }
+        //                        }
+        //                        rtel++;
+        //                    }
+        //                }
+
+        //                if (_vwrstarted) break;
+        //            }
+        //        }
+
+        //        // Si aucun nom alternatif ne fonctionne, chercher quand même par Userdescription
+        //        if (!symbolFound || !_vwrstarted)
+        //        {
+        //            gridViewSymbols.ActiveFilter.Clear();
+        //            SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
+        //            rtel = 0;
+
+        //            // Essayer avec chaque nom alternatif
+        //            foreach (string altName in alternativeNames)
+        //            {
+        //                foreach (SymbolHelper sh in sc)
+        //                {
+        //                    // Recherche plus flexible - vérifie si le nom est contenu n'importe où dans la description
+        //                    if ((sh.Userdescription.Contains(altName) || sh.Varname.Contains(altName)) && sh.CodeBlock == codeblock)
+        //                    {
+        //                        try
+        //                        {
+        //                            SélectionnerSymbole(rtel);
+        //                            _vwrstarted = true;
+        //                            StartTableViewer();
+        //                            break;
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                        }
+        //                    }
+        //                    rtel++;
+        //                }
+
+        //                if (_vwrstarted) break;
+        //            }
+        //        }
+
+        //        // Si toujours rien trouvé, afficher un message explicite
+        //        if (!_vwrstarted)
+        //        {
+        //            TableViewerStarted = true;
+        //            MessageBox.Show($"Impossible de trouver la carte '{symbolname}' pour ce véhicule. Elle pourrait être nommée différemment dans ce fichier ECU.",
+        //                "Carte non trouvée", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Impossible d'ouvrir la carte. Assurez-vous qu'un fichier est bien chargé.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
+        //}
+        // Modifiez la méthode StartTableViewer pour utiliser un symbole 3D aléatoire si nécessaire
+        //private void StartTableViewer(string symbolname, int codeblock)
+        //{
+        //    int rtel = 0;
+        //    bool _vwrstarted = false;
+        //    TableViewerStarted = false;
+
+        //    try
+        //    {
+        //        // Créer une liste de noms alternatifs pour les cartes
+        //        List<string> alternativeNames = new List<string>
+        //        {
+        //            symbolname,
+        //            symbolname.Replace(" ", "_"),
+        //            symbolname.Replace(" ", ""),
+        //            "Audi " + symbolname
+        //        };
+
+        //        bool symbolFound = false;
+        //        foreach (string altName in alternativeNames)
+        //        {
+        //            if (Tools.Instance.GetSymbolAddressLike(Tools.Instance.m_symbols, altName) > 0)
+        //            {
+        //                symbolFound = true;
+        //                gridViewSymbols.ActiveFilter.Clear();
+        //                gridViewSymbols.ApplyFindFilter("");
+        //                SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
+        //                rtel = 0;
+
+        //                // Rechercher d'abord par Varname
+        //                foreach (SymbolHelper sh in sc)
+        //                {
+        //                    if (sh.Varname.StartsWith(altName) && sh.CodeBlock == codeblock)
+        //                    {
+        //                        try
+        //                        {
+        //                            SélectionnerSymbole(rtel);
+        //                            _vwrstarted = true;
+        //                            StartTableViewer();
+        //                            break;
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                        }
+        //                    }
+        //                    rtel++;
+        //                }
+
+        //                // Si non trouvé, rechercher par Userdescription
+        //                if (!_vwrstarted)
+        //                {
+        //                    rtel = 0;
+        //                    foreach (SymbolHelper sh in sc)
+        //                    {
+        //                        if (sh.Userdescription.StartsWith(altName) && sh.CodeBlock == codeblock)
+        //                        {
+        //                            try
+        //                            {
+        //                                SélectionnerSymbole(rtel);
+        //                                _vwrstarted = true;
+        //                                StartTableViewer();
+        //                                break;
+        //                            }
+        //                            catch (Exception ex)
+        //                            {
+        //                                MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                            }
+        //                        }
+        //                        rtel++;
+        //                    }
+        //                }
+
+        //                if (_vwrstarted) break;
+        //            }
+        //        }
+
+        //        // Si aucun symbole n'a été trouvé ou affiché, utiliser un symbole 3D aléatoire
+        //        if (!symbolFound || !_vwrstarted)
+        //        {
+        //            SymbolHelper randomSymbol3D = GetRandom3DSymbol(Tools.Instance.m_symbols);
+        //            if (randomSymbol3D != null)
+        //            {
+        //                // Trouver l'index du symbole 3D aléatoire
+        //                SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
+        //                rtel = 0;
+        //                foreach (SymbolHelper sh in sc)
+        //                {
+        //                    if (sh.Flash_start_address == randomSymbol3D.Flash_start_address)
+        //                    {
+        //                        try
+        //                        {
+        //                            SélectionnerSymbole(rtel);
+        //                            _vwrstarted = true;
+        //                            StartTableViewer();
+        //                            // Afficher un message informatif discret
+        //                            Console.WriteLine($"Symbole '{symbolname}' non trouvé, utilisation du symbole aléatoire 3D: {randomSymbol3D.Varname}");
+        //                            break;
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            Console.WriteLine("Erreur lors de la sélection du symbole 3D aléatoire: " + ex.Message);
+        //                        }
+        //                    }
+        //                    rtel++;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                TableViewerStarted = true;
+        //                MessageBox.Show($"Impossible de trouver la carte '{symbolname}' et aucun symbole 3D n'est disponible.",
+        //                    "Carte non trouvée", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Impossible d'ouvrir la carte. Assurez-vous qu'un fichier est bien chargé.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
+        //}
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+        //private void StartTableViewer(string symbolname, int codeblock)
+        //{
+        //    int rtel = 0;
+        //    bool _vwrstarted = false;
+        //    TableViewerStarted = false;
+
+        //    try
+        //    {
+        //        SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
+        //        string createdMapName = symbolname ;
+
+        //        // Recherche prioritaire des cartes créées
+        //        foreach (SymbolHelper sh in sc)
+        //        {
+        //            if (sh.Varname == createdMapName)
+        //            {
+        //                try
+        //                {
+        //                    SélectionnerSymbole(rtel);
+        //                    _vwrstarted = true;
+        //                    StartTableViewer();
+        //                    return; // Sortie immédiate si on trouve une carte créée
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Console.WriteLine("Erreur lors de la sélection de la carte créée: " + ex.Message);
+        //                }
+        //            }
+        //            rtel++;
+        //        }
+
+        //        // Créer une liste de noms alternatifs pour les cartes
+        //        List<string> alternativeNames = new List<string>
+        //        {
+        //            symbolname,
+        //            symbolname.Replace(" ", "_"),
+        //            symbolname.Replace(" ", ""),
+        //            "Audi " + symbolname,
+        //            "BMW " + symbolname
+        //        };
+
+        //        bool symbolFound = false;
+
+        //        // Chercher le symbole avec les noms alternatifs
+        //        foreach (string altName in alternativeNames)
+        //        {
+        //            if (Tools.Instance.GetSymbolAddressLike(Tools.Instance.m_symbols, altName) > 0)
+        //            {
+        //                symbolFound = true;
+        //                gridViewSymbols.ActiveFilter.Clear();
+        //                gridViewSymbols.ApplyFindFilter("");
+        //                sc = (SymbolCollection)gridControl1.DataSource;
+        //                rtel = 0;
+
+        //                // Rechercher d'abord par Varname
+        //                foreach (SymbolHelper sh in sc)
+        //                {
+        //                    if (sh.Varname.StartsWith(altName) && sh.CodeBlock == codeblock)
+        //                    {
+        //                        try
+        //                        {
+        //                            SélectionnerSymbole(rtel);
+        //                            _vwrstarted = true;
+        //                            StartTableViewer();
+        //                            break;
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                        }
+        //                    }
+        //                    rtel++;
+        //                }
+
+        //                // Si non trouvé, rechercher par Userdescription
+        //                if (!_vwrstarted)
+        //                {
+        //                    rtel = 0;
+        //                    foreach (SymbolHelper sh in sc)
+        //                    {
+        //                        if (sh.Userdescription.StartsWith(altName) && sh.CodeBlock == codeblock)
+        //                        {
+        //                            try
+        //                            {
+        //                                SélectionnerSymbole(rtel);
+        //                                _vwrstarted = true;
+        //                                StartTableViewer();
+        //                                break;
+        //                            }
+        //                            catch (Exception ex)
+        //                            {
+        //                                MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                            }
+        //                        }
+        //                        rtel++;
+        //                    }
+        //                }
+
+        //                if (_vwrstarted) break;
+        //            }
+        //        }
+
+        //        // Si aucun symbole n'a été trouvé, créer une carte par défaut
+        //        if (!symbolFound || !_vwrstarted)
+        //        {
+        //            // Demander à l'utilisateur s'il souhaite créer une carte par défaut
+        //            if (IsMapAlreadyCreated(symbolname, Tools.Instance.m_symbols))
+        //            {
+        //                // Chercher et afficher la carte créée
+        //                sc = (SymbolCollection)gridControl1.DataSource;
+        //                rtel = 0;
+        //                foreach (SymbolHelper sh in sc)
+        //                {
+        //                    if (sh.Varname == symbolname ||
+        //                        (sh.Userdescription.Contains(symbolname) && sh.Userdescription.Contains("créé")))
+        //                    {
+        //                        try
+        //                        {
+        //                            SélectionnerSymbole(rtel);
+        //                            _vwrstarted = true;
+        //                            StartTableViewer();
+        //                            break;
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            Console.WriteLine("Erreur lors de la sélection de la carte créée: " + ex.Message);
+        //                        }
+        //                    }
+        //                    rtel++;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // Sinon, proposer de créer une nouvelle carte
+        //                DialogResult result = MessageBox.Show(
+        //                    $"La carte '{symbolname}' n'a pas été trouvée dans ce fichier ECU. " +
+        //                    "Voulez-vous créer une carte par défaut avec des valeurs à zéro?",
+        //                    "Carte non trouvée", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        //                ////////////////
+        //                if (result == DialogResult.Yes)
+        //                {
+        //                    // Créer la carte par défaut
+        //                    CreateDefaultMap(symbolname, Tools.Instance.m_currentfile);
+
+        //                    // Rechercher la nouvelle carte dans la collection mise à jour
+        //                    sc = (SymbolCollection)gridControl1.DataSource;
+        //                    rtel = 0;
+        //                    foreach (SymbolHelper sh in sc)
+        //                    {
+        //                        if (sh.Varname == symbolname)
+        //                        {
+        //                            try
+        //                            {
+        //                                SélectionnerSymbole(rtel);
+        //                                _vwrstarted = true;
+        //                                StartTableViewer();
+        //                                break;
+        //                            }
+        //                            catch (Exception ex)
+        //                            {
+        //                                MessageBox.Show("Erreur lors de l'affichage de la carte créée: " + ex.Message,
+        //                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                            }
+        //                        }
+        //                        rtel++;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    TableViewerStarted = true;
+        //                    MessageBox.Show($"Opération annulée. Aucune carte n'a été créée pour '{symbolname}'.",
+        //                        "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Impossible d'ouvrir ou de créer la carte: " + ex.Message,
+        //            "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
+        //}
+        /// <summary>
+        /// //////////////////////////////////////////////////////////////////////
+        /// </summary>
+        /// <param name="newSymbol"></param>
+        /// <param name="fileName"></param>
+        /// 
+
+
         private void StartTableViewer(string symbolname, int codeblock)
         {
             int rtel = 0;
             bool _vwrstarted = false;
             TableViewerStarted = false;
+
             try
             {
-                // Créer une liste de noms alternatifs pour les cartes Audi
-                List<string> alternativeNames = new List<string>
-                {
-                    symbolname,
-                    symbolname.Replace(" ", "_"),
-                    symbolname.Replace(" ", ""),
-                    "Audi " + symbolname
-                };
+                // Amélioration 1: Construire une expression régulière pour détecter les variations du nom
+                // Ex: pour "Driver wish", chercher aussi "Driver wish (1)", "Driver wish (2)", etc.
+                string searchPattern = "^" + Regex.Escape(symbolname) + @"(\s*\(\d+\))?(\s*\[.*\])?$";
+                Regex searchRegex = new Regex(searchPattern, RegexOptions.IgnoreCase);
 
-                bool symbolFound = false;
-                foreach (string altName in alternativeNames)
+                // Amélioration 2: Rechercher directement dans les symboles sans filtrer d'abord
+                SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
+
+                // Chercher d'abord la correspondance la plus exacte - celle sans numéro
+                foreach (SymbolHelper sh in sc)
                 {
-                    if (Tools.Instance.GetSymbolAddressLike(Tools.Instance.m_symbols, altName) > 0)
+                    if (sh.Varname.Equals(symbolname, StringComparison.OrdinalIgnoreCase))
                     {
-                        symbolFound = true;
-                        gridViewSymbols.ActiveFilter.Clear();
-                        gridViewSymbols.ApplyFindFilter("");
-                        SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
-                        rtel = 0;
-
-                        // Rechercher d'abord par Varname
-                        foreach (SymbolHelper sh in sc)
+                        try
                         {
-                            if (sh.Varname.StartsWith(altName) && sh.CodeBlock == codeblock)
+                            SélectionnerSymbole(rtel);
+                            _vwrstarted = true;
+                            StartTableViewer();
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Erreur lors de la sélection du symbole exact: " + ex.Message);
+                        }
+                    }
+                    rtel++;
+                }
+
+                // Si pas trouvé, chercher avec un motif plus large
+                if (!_vwrstarted)
+                {
+                    rtel = 0;
+                    foreach (SymbolHelper sh in sc)
+                    {
+                        // Vérifier si le nom correspond au motif recherché
+                        if (searchRegex.IsMatch(sh.Varname))
+                        {
+                            // Vérifier le code block si nécessaire
+                            if (codeblock == 0 || sh.CodeBlock == codeblock)
                             {
                                 try
                                 {
                                     SélectionnerSymbole(rtel);
                                     _vwrstarted = true;
                                     StartTableViewer();
+                                    Console.WriteLine("Correspondance trouvée: " + sh.Varname);
                                     break;
                                 }
                                 catch (Exception ex)
                                 {
-                                    MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    Console.WriteLine("Erreur lors de la sélection du symbole correspondant: " + ex.Message);
                                 }
                             }
-                            rtel++;
                         }
+                        rtel++;
+                    }
+                }
 
-                        // Si non trouvé, rechercher par Userdescription
-                        if (!_vwrstarted)
+                // Si toujours pas trouvé, chercher avec un motif encore plus large
+                if (!_vwrstarted)
+                {
+                    rtel = 0;
+                    foreach (SymbolHelper sh in sc)
+                    {
+                        // Chercher si le nom contient simplement la chaîne recherchée
+                        if (sh.Varname.IndexOf(symbolname, StringComparison.OrdinalIgnoreCase) >= 0)
                         {
+                            if (codeblock == 0 || sh.CodeBlock == codeblock)
+                            {
+                                try
+                                {
+                                    SélectionnerSymbole(rtel);
+                                    _vwrstarted = true;
+                                    StartTableViewer();
+                                    Console.WriteLine("Correspondance partielle trouvée: " + sh.Varname);
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("Erreur lors de la sélection du symbole partiel: " + ex.Message);
+                                }
+                            }
+                        }
+                        rtel++;
+                    }
+                }
+
+                // Si toujours rien trouvé, chercher des cartes similaires et ouvrir la première automatiquement
+                if (!_vwrstarted)
+                {
+                    // Collecter toutes les cartes similaires
+                    List<int> similairesIndices = new List<int>();
+
+                    rtel = 0;
+                    foreach (SymbolHelper sh in sc)
+                    {
+                        if (sh.Varname.IndexOf(symbolname, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            similairesIndices.Add(rtel);
+                            Console.WriteLine("Carte similaire trouvée pour ouverture auto: " + sh.Varname);
+                        }
+                        rtel++;
+                    }
+
+                    // Si des cartes similaires existent, ouvrir automatiquement la première
+                    if (similairesIndices.Count > 0)
+                    {
+                        int indexToSelect = similairesIndices[0]; // Première carte similaire
+                        try
+                        {
+                            SélectionnerSymbole(indexToSelect);
+                            _vwrstarted = true;
+                            StartTableViewer();
+                            Console.WriteLine("Ouverture automatique d'une carte similaire");
+                            return; // Sortir de la fonction après l'ouverture réussie
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Erreur lors de l'ouverture automatique d'une carte similaire: " + ex.Message);
+                        }
+                    }
+
+                    // Si vraiment aucune carte similaire n'est trouvée, proposer d'en créer une
+                    if (!_vwrstarted)
+                    {
+                        string message = $"La carte '{symbolname}' n'a pas été trouvée dans ce fichier ECU. " +
+                                        "Voulez-vous créer une carte par défaut avec des valeurs à zéro?";
+
+                        DialogResult result = MessageBox.Show(message, "Carte non trouvée",
+                                               MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            // Code existant pour créer une carte
+                            CreateDefaultMap(symbolname, Tools.Instance.m_currentfile);
+                            // Rechercher la nouvelle carte dans la collection mise à jour
+                            sc = (SymbolCollection)gridControl1.DataSource;
                             rtel = 0;
                             foreach (SymbolHelper sh in sc)
                             {
-                                if (sh.Userdescription.StartsWith(altName) && sh.CodeBlock == codeblock)
+                                if (sh.Varname == symbolname)
                                 {
                                     try
                                     {
@@ -1731,66 +2740,133 @@ namespace VAGSuite
                                     }
                                     catch (Exception ex)
                                     {
-                                        MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        MessageBox.Show("Erreur lors de l'affichage de la carte créée: " + ex.Message,
+                                            "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
                                 }
                                 rtel++;
                             }
                         }
-
-                        if (_vwrstarted) break;
-                    }
-                }
-
-                // Si aucun nom alternatif ne fonctionne, chercher quand même par Userdescription
-                if (!symbolFound || !_vwrstarted)
-                {
-                    gridViewSymbols.ActiveFilter.Clear();
-                    SymbolCollection sc = (SymbolCollection)gridControl1.DataSource;
-                    rtel = 0;
-
-                    // Essayer avec chaque nom alternatif
-                    foreach (string altName in alternativeNames)
-                    {
-                        foreach (SymbolHelper sh in sc)
+                        else
                         {
-                            // Recherche plus flexible - vérifie si le nom est contenu n'importe où dans la description
-                            if ((sh.Userdescription.Contains(altName) || sh.Varname.Contains(altName)) && sh.CodeBlock == codeblock)
-                            {
-                                try
-                                {
-                                    SélectionnerSymbole(rtel);
-                                    _vwrstarted = true;
-                                    StartTableViewer();
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show("Une erreur est survenue lors de la sélection du symbole.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
-                            rtel++;
+                            TableViewerStarted = true;
                         }
-
-                        if (_vwrstarted) break;
                     }
-                }
-
-                // Si toujours rien trouvé, afficher un message explicite
-                if (!_vwrstarted)
-                {
-                    TableViewerStarted = true;
-                    MessageBox.Show($"Impossible de trouver la carte '{symbolname}' pour ce véhicule. Elle pourrait être nommée différemment dans ce fichier ECU.",
-                        "Carte non trouvée", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Impossible d'ouvrir la carte. Assurez-vous qu'un fichier est bien chargé.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Impossible d'ouvrir ou de créer la carte: " + ex.Message,
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+        private void SaveCreatedMapMetadata(SymbolHelper newSymbol, string fileName)
+        {
+            // Chemin vers le fichier de métadonnées
+            string metadataPath = Path.Combine(
+                Path.GetDirectoryName(fileName),
+                Path.GetFileNameWithoutExtension(fileName) + "_metadata.xml"
+            );
 
+            // Créer ou charger la table de métadonnées
+            System.Data.DataTable dt = new System.Data.DataTable("CreatedMaps");
+
+            if (File.Exists(metadataPath))
+            {
+                try
+                {
+                    dt.ReadXml(metadataPath);
+                }
+                catch
+                {
+                    // Si le fichier est corrompu, créer une nouvelle table
+                    dt = new System.Data.DataTable("CreatedMaps");
+                }
+            }
+
+            // Ajouter les colonnes si elles n'existent pas
+            if (dt.Columns.Count == 0)
+            {
+                dt.Columns.Add("SYMBOLNAME");
+                dt.Columns.Add("FLASHADDRESS", Type.GetType("System.Int32"));
+                dt.Columns.Add("LENGTH", Type.GetType("System.Int32"));
+                dt.Columns.Add("XAXISLEN", Type.GetType("System.Int32"));
+                dt.Columns.Add("YAXISLEN", Type.GetType("System.Int32"));
+                dt.Columns.Add("XAXISADDR", Type.GetType("System.Int32"));
+                dt.Columns.Add("YAXISADDR", Type.GetType("System.Int32"));
+                dt.Columns.Add("XAXISDESCR");
+                dt.Columns.Add("YAXISDESCR");
+                dt.Columns.Add("ZAXISDESCR");
+                dt.Columns.Add("CORRECTION", Type.GetType("System.Double"));
+                dt.Columns.Add("OFFSET", Type.GetType("System.Double"));
+                dt.Columns.Add("CATEGORY");
+                dt.Columns.Add("SUBCATEGORY");
+                dt.Columns.Add("XAXISUNITS");
+                dt.Columns.Add("YAXISUNITS");
+            }
+
+            // Vérifier si cette carte existe déjà dans les métadonnées
+            bool exists = false;
+            foreach (DataRow row in dt.Rows)
+            {
+                if (Convert.ToInt32(row["FLASHADDRESS"]) == newSymbol.Flash_start_address)
+                {
+                    // Mettre à jour les métadonnées existantes
+                    row["SYMBOLNAME"] = newSymbol.Varname;
+                    row["LENGTH"] = newSymbol.Length;
+                    row["XAXISLEN"] = newSymbol.X_axis_length;
+                    row["YAXISLEN"] = newSymbol.Y_axis_length;
+                    row["XAXISADDR"] = newSymbol.X_axis_address;
+                    row["YAXISADDR"] = newSymbol.Y_axis_address;
+                    row["XAXISDESCR"] = newSymbol.X_axis_descr;
+                    row["YAXISDESCR"] = newSymbol.Y_axis_descr;
+                    row["ZAXISDESCR"] = newSymbol.Z_axis_descr;
+                    row["CORRECTION"] = newSymbol.Correction;
+                    row["OFFSET"] = newSymbol.Offset;
+                    row["CATEGORY"] = newSymbol.Category;
+                    row["SUBCATEGORY"] = newSymbol.Subcategory;
+                    row["XAXISUNITS"] = newSymbol.XaxisUnits;
+                    row["YAXISUNITS"] = newSymbol.YaxisUnits;
+                    exists = true;
+                    break;
+                }
+            }
+
+            // Si la carte n'existe pas, l'ajouter
+            if (!exists)
+            {
+                DataRow newRow = dt.NewRow();
+                newRow["SYMBOLNAME"] = newSymbol.Varname;
+                newRow["FLASHADDRESS"] = newSymbol.Flash_start_address;
+                newRow["LENGTH"] = newSymbol.Length;
+                newRow["XAXISLEN"] = newSymbol.X_axis_length;
+                newRow["YAXISLEN"] = newSymbol.Y_axis_length;
+                newRow["XAXISADDR"] = newSymbol.X_axis_address;
+                newRow["YAXISADDR"] = newSymbol.Y_axis_address;
+                newRow["XAXISDESCR"] = newSymbol.X_axis_descr;
+                newRow["YAXISDESCR"] = newSymbol.Y_axis_descr;
+                newRow["ZAXISDESCR"] = newSymbol.Z_axis_descr;
+                newRow["CORRECTION"] = newSymbol.Correction;
+                newRow["OFFSET"] = newSymbol.Offset;
+                newRow["CATEGORY"] = newSymbol.Category;
+                newRow["SUBCATEGORY"] = newSymbol.Subcategory;
+                newRow["XAXISUNITS"] = newSymbol.XaxisUnits;
+                newRow["YAXISUNITS"] = newSymbol.YaxisUnits;
+
+                dt.Rows.Add(newRow);
+            }
+
+            try
+            {
+                // Sauvegarder les métadonnées
+                dt.WriteXml(metadataPath);
+                Console.WriteLine("Métadonnées sauvegardées pour la carte créée: " + newSymbol.Varname);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur lors de la sauvegarde des métadonnées: " + ex.Message);
+            }
+        }
         private bool CompareSymbolToCurrentFile(string symbolname, int address, int length, string filename, out double diffperc, out int diffabs, out double diffavg, double correction)
         {
             diffperc = 0;
@@ -2547,7 +3623,28 @@ namespace VAGSuite
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
+                // Sauvegarder les cartes créées avant de copier le fichier
+                SaveCreatedMaps(Tools.Instance.m_currentfile);
+
+                // Copier le fichier principal
                 File.Copy(Tools.Instance.m_currentfile, sfd.FileName, true);
+
+                // Copier également le fichier de métadonnées s'il existe
+                string sourceMetadataPath = Path.Combine(
+                    Path.GetDirectoryName(Tools.Instance.m_currentfile),
+                    Path.GetFileNameWithoutExtension(Tools.Instance.m_currentfile) + "createdmaps"
+                );
+
+                string targetMetadataPath = Path.Combine(
+                    Path.GetDirectoryName(sfd.FileName),
+                    Path.GetFileNameWithoutExtension(sfd.FileName) + ".createdmaps"
+                );
+
+                if (File.Exists(sourceMetadataPath))
+                {
+                    File.Copy(sourceMetadataPath, targetMetadataPath, true);
+                }
+
                 if (MessageBox.Show("Do you want to open the newly saved file?", "Question", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     m_appSettings.Lastprojectname = "";
@@ -3406,81 +4503,15 @@ namespace VAGSuite
 
         private void btnDriverWish_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //StartTableViewer("Driver wish", 2);
-            bool success = false;
+            StartTableViewer("Driver wish", 2);
 
-            try
-            {
-                // Essayer la première adresse - Smoke limiter [flashbank 0]
-                OpenMapByAddressDirect(934252);  // Remplacez par l'adresse correcte
-                success = true;
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    // Essayer la deuxième adresse visible
-                    OpenMapByAddressDirect(932472);  // Adresse visible dans votre capture
-                    success = true;
-                }
-                catch (Exception)
-                {
-                    try
-                    {
-                        // Essayer la troisième adresse visible
-                        OpenMapByAddressDirect(949038);  // Adresse visible dans votre capture
-                        success = true;
-                    }
-                    catch (Exception)
-                    {
-                        try
-                        {
-                            // Essayer avec des noms alternatifs
-                            StartTableViewer("Driver wish", 2);
-                            success = true;
-                        }
-                        catch (Exception)
-                        {
-                            // Essayer la méthode d'origine
-                            StartTableViewer("Driver wish", 2);
-                        }
-                    }
-                }
-            }
-
-            // Si aucune tentative n'a réussi, afficher un message
-            if (!success)
-            {
-                MessageBox.Show("Impossible de trouver la carte 'Driver wish' sous aucun nom connu ou adresse.",
-                    "Carte non trouvée", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
         }
 
         private void btnTorqueLimiter_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //StartTableViewer("Torque limiter", 2);
+            StartTableViewer("Torque limiter", 2);
 
-            //Essayer d'abord avec l'adresse directe
-            bool mapOpened = OpenMapByAddress(16404);
-
-            // Si ça n'a pas fonctionné, essayer avec des noms alternatifs
-            if (!mapOpened)
-                //mapOpened = StartTableViewerWithResult("Engine_torque_limit", 2);
-                mapOpened = OpenMapByAddress(497652);
-            if (!mapOpened)
-                //mapOpened = StartTableViewerWithResult("Engine_torque_limit", 2);
-                mapOpened = OpenMapByAddress(3979962);
-            if (!mapOpened)
-                mapOpened = StartTableViewerWithResult("Torque_max", 2);
-            if (!mapOpened)
-                mapOpened = StartTableViewerWithResult("Torque limiter", 2);
-
-            // Si toujours rien, afficher un message
-            if (!mapOpened)
-            {
-                MessageBox.Show("Impossible de trouver la carte 'Torque limiter' sous aucun nom connu.",
-                    "Carte non trouvée", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+           
         }
         // Vous auriez besoin d'ajouter cette fonction
         // Nouvelle méthode qui retourne un booléen indiquant si la carte a été trouvée et ouverte
@@ -3523,56 +4554,8 @@ namespace VAGSuite
 
         private void btnSmokeLimiter_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //StartTableViewer("Smoke limiter", 2);
-            // Essayer avec plusieurs adresses possibles pour Smoke limiter
-            // (Ces adresses sont visibles dans votre capture d'écran)
-            bool success = false;
-
-            try
-            {
-                // Essayer la première adresse - Smoke limiter [flashbank 0]
-                OpenMapByAddressDirect(423);  // Remplacez par l'adresse correcte
-                success = true;
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    // Essayer la deuxième adresse visible
-                    OpenMapByAddressDirect(246776);  // Adresse visible dans votre capture
-                    success = true;
-                }
-                catch (Exception)
-                {
-                    try
-                    {
-                        // Essayer la troisième adresse visible
-                        OpenMapByAddressDirect(247536);  // Adresse visible dans votre capture
-                        success = true;
-                    }
-                    catch (Exception)
-                    {
-                        try
-                        {
-                            // Essayer avec des noms alternatifs
-                            StartTableViewer("Smoke_limiter", 2);
-                            success = true;
-                        }
-                        catch (Exception)
-                        {
-                            // Essayer la méthode d'origine
-                            StartTableViewer("Smoke limiter", 2);
-                        }
-                    }
-                }
-            }
-
-            // Si aucune tentative n'a réussi, afficher un message
-            if (!success)
-            {
-                MessageBox.Show("Impossible de trouver la carte 'Smoke limiter' sous aucun nom connu ou adresse.",
-                    "Carte non trouvée", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            StartTableViewer("Smoke limiter", 2);
+           
         }
 
         private void OpenMapByAddressDirect(int address)
@@ -3697,7 +4680,546 @@ namespace VAGSuite
 
             System.Windows.Forms.Application.DoEvents();
         }
-        
+        private bool IsMapAlreadyCreated(string mapName, SymbolCollection symbols)
+        {
+            // Vérifier si la carte existe déjà avec le nom exact ou "nom (créé)"
+            foreach (SymbolHelper sh in symbols)
+            {
+                if (sh.Varname == mapName ||
+                    sh.Varname == mapName ||
+                    sh.Userdescription == mapName ||
+                    sh.Userdescription.Contains(mapName))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private void CreateDefaultMap(string mapName, string fileName)
+        {
+            // Définir les dimensions standard pour chaque type de carte
+            int columns = 8;
+            int rows = 16;
+            byte[] defaultData;
+            int address = 0;
+
+            // Variables pour les axes
+            int[] xAxisValues = null;
+            int[] yAxisValues = null;
+            byte[] xAxisData = null;
+            byte[] yAxisData = null;
+            int xAxisAddress = 0;
+            int yAxisAddress = 0;
+
+            // Personnaliser les dimensions et valeurs d'axes selon le type de carte
+            if (mapName == "Driver wish")
+            {
+                columns = 8;  // 8 positions de pédale
+                rows = 16;    // 16 régimes moteur
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000, 6400, 6800 };
+                yAxisValues = new int[] { 0, 5, 10, 15, 20, 25, 30, 35 };
+            }
+            else if (mapName == "Torque limiter")
+            {
+                columns = 20;
+                rows = 4;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 500,1000,1500,2000 };
+                yAxisValues = new int[] { 1000, 1400, 1800, 2200, 2600, 3000, 3400, 3800, 4200, 4600, 5000, 5400,5800,6200,6600,7000,7400,7800,8200,8600 };
+            }
+            else if (mapName == "Smoke limiter")
+            {
+                columns = 12;
+                rows = 16;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 500,1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500,6000,6500,7000,7500,8000 };
+                yAxisValues = new int[] { 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850 };
+            }
+            else if (mapName == "Target boost")
+            {
+                columns = 10;
+                rows = 16;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 0,400,800,1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800,5200,5600,6000 };
+                yAxisValues = new int[] { 0,5, 10, 15,20, 30, 40, 50, 60, 70 };
+            }
+            else if (mapName == "Boost pressure limiter")
+            {
+                columns = 10;
+                rows = 10;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800 };
+                yAxisValues = new int[] {1000,1500,2000,2500,3000,3500,4000,4500,5000,5500 };
+            }
+            else if (mapName == "Boost pressure guard" || mapName == "SVBL Boost limiter")
+            {
+                columns = 8;
+                rows = 10;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800 };
+                yAxisValues = new int[] { 0, 10, 20, 30, 40, 50, 60, 70 };
+            }
+            else if (mapName == "N75 duty cycle")
+            {
+                columns = 12;
+                rows = 16;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 500,1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500,6000,6500,7000,7500,8000 };
+                yAxisValues = new int[] { 0,5, 10,15, 20,25, 30, 40, 50, 60, 70 };
+            }
+            else if (mapName == "EGR")
+            {
+                columns = 12;
+                rows = 16;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 500,1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500,6000,6500,7000,7500,8000 };
+                yAxisValues = new int[] { 5, 15,20, 25,30, 35,40, 45,50, 55, 65, 75 };
+            }
+            else if (mapName == "Injector duration")
+            {
+                columns = 10;
+                rows = 10;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 800, 1300, 1800, 2300, 2800, 3300, 3800, 4300, 4800, 5300 };
+                yAxisValues = new int[] { 5, 15, 25, 35, 45, 55, 65, 75,80,85 };
+            }
+            else if (mapName == "Start of injection")
+            {
+                columns = 12;
+                rows = 16;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 800, 1300, 1800, 2300, 2800, 3300, 3800, 4300, 4800, 5300,5800,6300,6800,7300,7800,8300 };
+                yAxisValues = new int[] { 5,10, 15,20, 25, 35, 45,50, 55,60, 65, 75 };
+            }
+            else if (mapName == "IQ by MAP limiter")
+            {
+                columns = 8;
+                rows = 10;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500 };
+                yAxisValues = new int[] { 100, 200, 300, 400, 500, 600, 700, 800 }; // Valeurs de pression en mbar
+            }
+            else if (mapName == "IQ by MAF limiter")
+            {
+                columns = 8;
+                rows = 10;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500 };
+                yAxisValues = new int[] { 200, 400, 600, 800, 1000, 1200, 1400, 1600 }; // Valeurs de débit d'air en mg/stroke
+            }
+            else if (mapName == "SOI limiter")
+            {
+                columns = 12;
+                rows = 14;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { 500,1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500,6000,6500,7000 };
+                yAxisValues = new int[] { 5,10, 20, 30, 40, 50, 60, 70, 80,90,100,110 };
+            }
+            else if (mapName == "Start IQ")
+            {
+                columns = 6;
+                rows = 8;
+
+                // Définir les valeurs des axes
+                xAxisValues = new int[] { -20, -10, 0, 10, 20, 30, 40, 50 }; // Température en °C
+                yAxisValues = new int[] { 0, 600, 1200, 1800, 2400, 3000 }; // Régime moteur au démarrage
+            }
+            else
+            {
+                // Valeurs par défaut pour les cartes non spécifiées
+                columns = 8;
+                rows = 10;
+
+                // Définir les valeurs des axes par défaut
+                xAxisValues = new int[] { 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500 };
+                yAxisValues = new int[] { 10, 20, 30, 40, 50, 60, 70, 80 };
+            }
+
+            // Calculer la taille totale nécessaire (2 octets par valeur pour format 16-bit)
+            int totalSize = columns * rows * 2;
+            defaultData = new byte[totalSize];
+
+            // Initialiser toutes les valeurs à zéro
+            for (int i = 0; i < totalSize; i++)
+            {
+                defaultData[i] = 0;
+            }
+
+            // Créer les données pour les axes
+            if (xAxisValues != null && yAxisValues != null)
+            {
+                // Axe X
+                xAxisData = new byte[rows * 2]; // 2 octets par valeur
+                for (int i = 0; i < rows; i++)
+                {
+                    if (i < xAxisValues.Length)
+                    {
+                        xAxisData[i * 2] = (byte)(xAxisValues[i] >> 8);     // High byte
+                        xAxisData[i * 2 + 1] = (byte)(xAxisValues[i] & 0xFF); // Low byte
+                    }
+                    else
+                    {
+                        // Valeurs par défaut si pas assez de valeurs définies
+                        xAxisData[i * 2] = 0;
+                        xAxisData[i * 2 + 1] = 0;
+                    }
+                }
+
+                // Axe Y
+                yAxisData = new byte[columns * 2]; // 2 octets par valeur
+                for (int i = 0; i < columns; i++)
+                {
+                    if (i < yAxisValues.Length)
+                    {
+                        yAxisData[i * 2] = (byte)(yAxisValues[i] >> 8);     // High byte
+                        yAxisData[i * 2 + 1] = (byte)(yAxisValues[i] & 0xFF); // Low byte
+                    }
+                    else
+                    {
+                        // Valeurs par défaut si pas assez de valeurs définies
+                        yAxisData[i * 2] = 0;
+                        yAxisData[i * 2 + 1] = 0;
+                    }
+                }
+            }
+
+            // Trouver un espace libre dans le fichier binaire pour la carte
+            address = FindFreeSpace(fileName, totalSize);
+            if (address == 0)
+            {
+                MessageBox.Show("Impossible de trouver un espace libre dans le fichier pour créer la carte.",
+                                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Trouver des espaces libres pour les axes
+            if (xAxisData != null)
+            {
+                xAxisAddress = FindFreeSpace(fileName, xAxisData.Length, address + totalSize);
+                if (xAxisAddress == 0)
+                {
+                    MessageBox.Show("Impossible de trouver un espace libre pour l'axe X.",
+                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            if (yAxisData != null)
+            {
+                yAxisAddress = FindFreeSpace(fileName, yAxisData.Length, xAxisAddress + (xAxisData?.Length ?? 0));
+                if (yAxisAddress == 0)
+                {
+                    MessageBox.Show("Impossible de trouver un espace libre pour l'axe Y.",
+                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // Créer une nouvelle entrée dans la collection de symboles
+            SymbolHelper newSymbol = new SymbolHelper();
+            newSymbol.Varname = mapName;
+            newSymbol.Flash_start_address = address;
+            newSymbol.Length = totalSize;
+            newSymbol.X_axis_length = rows;
+            newSymbol.Y_axis_length = columns;
+
+            // Configurer les axes
+            if (xAxisAddress > 0)
+            {
+                newSymbol.X_axis_address = xAxisAddress;
+            }
+
+            if (yAxisAddress > 0)
+            {
+                newSymbol.Y_axis_address = yAxisAddress;
+            }
+
+            // Ajouter des descriptions selon le type de carte
+            if (mapName == "Driver wish")
+            {
+                newSymbol.X_axis_descr = "Throttle position";
+                newSymbol.Y_axis_descr = "Engine speed (rpm)";
+                newSymbol.Z_axis_descr = "Requested IQ (mg)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "%";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Driver demand";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Torque limiter")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Atm. pressure (mbar)";
+                newSymbol.Z_axis_descr = "Torque limit (Nm)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "%";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Limits";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Smoke limiter")
+            {
+                newSymbol.X_axis_descr = "AirFlow mg/stroke";
+                newSymbol.Y_axis_descr = "Engine speed (rpm)";
+                newSymbol.Z_axis_descr = "Maximum fuel (mg/cyl)";
+                newSymbol.XaxisUnits = "mg";
+                newSymbol.YaxisUnits = " RPM";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Limits";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Target boost")
+            {
+                newSymbol.X_axis_descr = "IQ (mg/stroke)";
+                newSymbol.Y_axis_descr = "Engine speed (rpm)";
+                newSymbol.Z_axis_descr = "Target boost (mbar)";
+                newSymbol.XaxisUnits = "mg";
+                newSymbol.YaxisUnits = "RPM";
+                newSymbol.Category = "Turbo";
+                newSymbol.Subcategory = "Target";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Boost pressure limiter")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Atmospheric pressure (mbar)";
+                newSymbol.Z_axis_descr = "Maximum boost (mbar)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "%";
+                newSymbol.Category = "Turbo";
+                newSymbol.Subcategory = "Limiter";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Boost pressure guard" || mapName == "SVBL Boost limiter")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Load";
+                newSymbol.Z_axis_descr = "SVBL limit (mbar)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "%";
+                newSymbol.Category = "Turbo";
+                newSymbol.Subcategory = "SVBL";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "N75 duty cycle")
+            {
+                newSymbol.X_axis_descr = "IQ ( mg/stroke)";
+                newSymbol.Y_axis_descr = "Engine speed (rpm)";
+                newSymbol.Z_axis_descr = "Duty cycle (%)";
+                newSymbol.XaxisUnits = "mbar";
+                newSymbol.YaxisUnits = "RPM";
+                newSymbol.Category = "Turbo";
+                newSymbol.Subcategory = "N75";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "EGR")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Load";
+                newSymbol.Z_axis_descr = "EGR rate (%)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "%";
+                newSymbol.Category = "Turbo";
+                newSymbol.Subcategory = "EGR";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Injector duration")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Injection quantity (mg)";
+                newSymbol.Z_axis_descr = "Duration (µs)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "mg";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Timing";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Start of injection")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Injection quantity (mg)";
+                newSymbol.Z_axis_descr = "Start of injection (°BTDC)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "mg";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Timing";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "IQ by MAP limiter")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "MAP (mbar)";
+                newSymbol.Z_axis_descr = "Maximum IQ (mg)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "mbar";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Limits";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "IQ by MAF limiter")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Air mass (mg/stroke)";
+                newSymbol.Z_axis_descr = "Maximum IQ (mg)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "mg/stroke";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Limits";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "SOI limiter")
+            {
+                newSymbol.X_axis_descr = "Engine speed (rpm)";
+                newSymbol.Y_axis_descr = "Injection quantity (mg)";
+                newSymbol.Z_axis_descr = "SOI limit (°BTDC)";
+                newSymbol.XaxisUnits = "RPM";
+                newSymbol.YaxisUnits = "mg";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Timing";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else if (mapName == "Start IQ")
+            {
+                newSymbol.X_axis_descr = "Temperature (°C)";
+                newSymbol.Y_axis_descr = "Engine speed (rpm)";
+                newSymbol.Z_axis_descr = "Start injection quantity (mg)";
+                newSymbol.XaxisUnits = "°C";
+                newSymbol.YaxisUnits = "RPM";
+                newSymbol.Category = "Injection quantity";
+                newSymbol.Subcategory = "Start";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+            else
+            {
+                // Informations génériques pour les cartes non spécifiées
+                newSymbol.X_axis_descr = "X Axis";
+                newSymbol.Y_axis_descr = "Y Axis";
+                newSymbol.Z_axis_descr = "Values";
+                newSymbol.Category = "Custom";
+                newSymbol.Subcategory = "Custom map";
+                newSymbol.Correction = 1.0;
+                newSymbol.Offset = 0.0;
+            }
+
+            // Écrire les données dans le fichier
+            Tools.Instance.savedatatobinary(address, totalSize, defaultData, fileName, true, "Carte créée: " + mapName, Tools.Instance.m_currentFileType);
+
+            // Écrire les données des axes
+            if (xAxisData != null && xAxisAddress > 0)
+            {
+                Tools.Instance.savedatatobinary(xAxisAddress, xAxisData.Length, xAxisData, fileName, false, Tools.Instance.m_currentFileType);
+            }
+
+            if (yAxisData != null && yAxisAddress > 0)
+            {
+                Tools.Instance.savedatatobinary(yAxisAddress, yAxisData.Length, yAxisData, fileName, false, Tools.Instance.m_currentFileType);
+            }
+
+            // Ajouter le nouveau symbole à la collection
+            Tools.Instance.m_symbols.Add(newSymbol);
+            SaveCreatedMapMetadata(newSymbol, fileName);
+            SaveCreatedMaps(fileName);
+            SaveSymbolToBinaryFile(newSymbol, fileName);
+            // Rafraîchir la grille
+            gridControl1.RefreshDataSource();
+
+            // Mettre à jour les checksums si nécessaire
+            VerifyChecksum(fileName, false, false);
+        }
+
+        // Version améliorée de FindFreeSpace qui évite les zones déjà utilisées
+        private int FindFreeSpace(string fileName, int requiredSize, int startFrom = 0)
+        {
+            // Lire le fichier binaire
+            byte[] fileData = File.ReadAllBytes(fileName);
+
+            // Chercher une séquence de FF ou 00 assez longue
+            for (int i = startFrom; i < fileData.Length - requiredSize; i++)
+            {
+                bool spaceFound = true;
+
+                // Vérifier si c'est une séquence de FF ou 00
+                byte checkByte = fileData[i];
+                if (checkByte != 0xFF && checkByte != 0x00)
+                    continue;
+
+                // Vérifier que toute la séquence est identique
+                for (int j = 0; j < requiredSize; j++)
+                {
+                    if (fileData[i + j] != checkByte)
+                    {
+                        spaceFound = false;
+                        break;
+                    }
+                }
+
+                if (spaceFound)
+                    return i;
+            }
+
+            return 0; // Aucun espace trouvé
+        }
+
+        // Trouver un espace libre dans le fichier
+        private int FindFreeSpace(string fileName, int requiredSize)
+        {
+            // Lire le fichier binaire
+            byte[] fileData = File.ReadAllBytes(fileName);
+
+            // Chercher une séquence de FF ou 00 assez longue
+            for (int i = 0; i < fileData.Length - requiredSize; i++)
+            {
+                bool spaceFound = true;
+
+                // Vérifier si c'est une séquence de FF ou 00
+                byte checkByte = fileData[i];
+                if (checkByte != 0xFF && checkByte != 0x00)
+                    continue;
+
+                // Vérifier que toute la séquence est identique
+                for (int j = 0; j < requiredSize; j++)
+                {
+                    if (fileData[i + j] != checkByte)
+                    {
+                        spaceFound = false;
+                        break;
+                    }
+                }
+
+                if (spaceFound)
+                    return i;
+            }
+
+            return 0; // Aucun espace trouvé
+        }
         void axis_Save(object sender, EventArgs e)
         {
             if (sender is ctrlAxisEditor)
@@ -4949,31 +6471,411 @@ namespace VAGSuite
             dt.Columns.Add("SYMBOLNUMBER", Type.GetType("System.Int32"));
             dt.Columns.Add("FLASHADDRESS", Type.GetType("System.Int32"));
             dt.Columns.Add("DESCRIPTION");
+            dt.Columns.Add("ISCREATED", Type.GetType("System.Boolean"));
+            dt.Columns.Add("XAXISADDRESS", Type.GetType("System.Int32"));
+            dt.Columns.Add("YAXISADDRESS", Type.GetType("System.Int32"));
+
             byte[] allBytes = File.ReadAllBytes(Tools.Instance.m_currentfile);
             string boschpartNumber = Tools.Instance.ExtractBoschPartnumber(allBytes);
             partNumberConverter pnc = new partNumberConverter();
-            ECUInfo info = pnc.ConvertPartnumber(boschpartNumber,allBytes.Length);
+            ECUInfo info = pnc.ConvertPartnumber(boschpartNumber, allBytes.Length);
             string checkstring = boschpartNumber + "_" + info.SoftwareID;
 
-            string xmlfilename = Tools.Instance.GetWorkingDirectory() + "\\repository\\" + Path.GetFileNameWithoutExtension(Tools.Instance.m_currentfile) + File.GetCreationTime(Tools.Instance.m_currentfile).ToString("yyyyMMddHHmmss") + checkstring + ".xml";
+            string xmlfilename = Tools.Instance.GetWorkingDirectory() + "\\repository\\" +
+                                 Path.GetFileNameWithoutExtension(Tools.Instance.m_currentfile) +
+                                 File.GetCreationTime(Tools.Instance.m_currentfile).ToString("yyyyMMddHHmmss") +
+                                 checkstring + ".xml";
+
             if (!Directory.Exists(Tools.Instance.GetWorkingDirectory() + "\\repository"))
             {
                 Directory.CreateDirectory(Tools.Instance.GetWorkingDirectory() + "\\repository");
             }
+
             if (File.Exists(xmlfilename))
             {
                 File.Delete(xmlfilename);
             }
+
             foreach (SymbolHelper sh in Tools.Instance.m_symbols)
             {
-                if (sh.Userdescription != "")
+                bool isCreated = sh.Varname.Contains("(créé)");
+                if (sh.Userdescription != "" || isCreated)
                 {
-                    dt.Rows.Add(sh.Varname, sh.Symbol_number, sh.Flash_start_address, sh.Userdescription);
+                    dt.Rows.Add(
+                        sh.Varname,
+                        sh.Symbol_number,
+                        sh.Flash_start_address,
+                        sh.Userdescription,
+                        isCreated,
+                        sh.X_axis_address,
+                        sh.Y_axis_address
+                    );
                 }
             }
+
             dt.WriteXml(xmlfilename);
         }
+        private void RestoreCreatedMap(DataRow mapData, SymbolCollection symbols)
+        {
+            try
+            {
+                int address = Convert.ToInt32(mapData["FLASHADDRESS"]);
+                string varname = mapData["SYMBOLNAME"].ToString();
+                int xAxisAddress = 0;
+                int yAxisAddress = 0;
 
+                // Récupérer les adresses des axes si disponibles
+                if (mapData.Table.Columns.Contains("XAXISADDRESS") && mapData["XAXISADDRESS"] != DBNull.Value)
+                    xAxisAddress = Convert.ToInt32(mapData["XAXISADDRESS"]);
+
+                if (mapData.Table.Columns.Contains("YAXISADDRESS") && mapData["YAXISADDRESS"] != DBNull.Value)
+                    yAxisAddress = Convert.ToInt32(mapData["YAXISADDRESS"]);
+
+                // Créer un nouveau symbole
+                SymbolHelper newSymbol = new SymbolHelper();
+                newSymbol.Varname = varname;
+                newSymbol.Flash_start_address = address;
+                newSymbol.Userdescription = mapData["DESCRIPTION"].ToString();
+
+                // Associer les axes si disponibles
+                if (xAxisAddress > 0)
+                    newSymbol.X_axis_address = xAxisAddress;
+
+                if (yAxisAddress > 0)
+                    newSymbol.Y_axis_address = yAxisAddress;
+
+                // Déterminer les paramètres par défaut en fonction du nom de la carte
+                string baseName = varname.Replace(" (créé)", "");
+                SetDefaultMapParameters(newSymbol, baseName);
+
+                // Ajouter le symbole à la collection
+                symbols.Add(newSymbol);
+
+                Console.WriteLine("Carte créée restaurée: " + varname + " à l'adresse " + address.ToString("X8"));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur lors de la restauration d'une carte créée: " + ex.Message);
+            }
+        }
+        private void SetDefaultMapParameters(SymbolHelper symbol, string mapName)
+        {
+            // Définir les dimensions et descriptions par défaut
+            if (mapName.Contains("Driver wish"))
+            {
+                symbol.X_axis_length = 16;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 16 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Throttle position";
+                symbol.Z_axis_descr = "Requested IQ (mg)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Driver demand";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Torque limiter"))
+            {
+                symbol.X_axis_length = 12;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 12 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Load";
+                symbol.Z_axis_descr = "Torque limit (Nm)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Limits";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Smoke limiter"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Air mass (mg/cyl)";
+                symbol.Z_axis_descr = "Maximum fuel (mg/cyl)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mg/cyl";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Limits";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Target boost") || mapName.Contains("Boost target"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Load";
+                symbol.Z_axis_descr = "Target boost (mbar)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Turbo";
+                symbol.Subcategory = "Target";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Boost pressure limiter") || mapName.Contains("Boost limit"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Load";
+                symbol.Z_axis_descr = "Maximum boost (mbar)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Turbo";
+                symbol.Subcategory = "Limiter";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Boost pressure guard") || mapName.Contains("SVBL"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Load";
+                symbol.Z_axis_descr = "SVBL limit (mbar)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Turbo";
+                symbol.Subcategory = "SVBL";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("N75 duty cycle") || mapName.Contains("N75 duty"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Boost error (mbar)";
+                symbol.Z_axis_descr = "Duty cycle (%)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mbar";
+                symbol.Category = "Turbo";
+                symbol.Subcategory = "N75";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("EGR"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Load";
+                symbol.Z_axis_descr = "EGR rate (%)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Turbo";
+                symbol.Subcategory = "EGR";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Injector duration") || mapName.Contains("Injection duration"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Injection quantity (mg)";
+                symbol.Z_axis_descr = "Duration (µs)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mg";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Timing";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Start of injection") || mapName.Contains("SOI"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Injection quantity (mg)";
+                symbol.Z_axis_descr = "Start of injection (°BTDC)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mg";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Timing";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("IQ by MAP limiter"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "MAP (mbar)";
+                symbol.Z_axis_descr = "Maximum IQ (mg)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mbar";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Limits";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("IQ by MAF limiter"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Air mass (mg/stroke)";
+                symbol.Z_axis_descr = "Maximum IQ (mg)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mg/stroke";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Limits";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("SOI limiter"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Injection quantity (mg)";
+                symbol.Z_axis_descr = "SOI limit (°BTDC)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mg";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Timing";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Start IQ"))
+            {
+                symbol.X_axis_length = 8;
+                symbol.Y_axis_length = 6;
+                symbol.Length = 8 * 6 * 2;
+                symbol.X_axis_descr = "Temperature (°C)";
+                symbol.Y_axis_descr = "Engine speed (rpm)";
+                symbol.Z_axis_descr = "Start injection quantity (mg)";
+                symbol.XaxisUnits = "°C";
+                symbol.YaxisUnits = "RPM";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Start";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Launch control"))
+            {
+                symbol.X_axis_length = 8;
+                symbol.Y_axis_length = 6;
+                symbol.Length = 8 * 6 * 2;
+                symbol.X_axis_descr = "Gear";
+                symbol.Y_axis_descr = "Speed (km/h)";
+                symbol.Z_axis_descr = "RPM limit";
+                symbol.XaxisUnits = "";
+                symbol.YaxisUnits = "km/h";
+                symbol.Category = "Special features";
+                symbol.Subcategory = "Launch Control";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Inverse driver wish"))
+            {
+                symbol.X_axis_length = 16;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 16 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Requested IQ (mg)";
+                symbol.Z_axis_descr = "Throttle position (%)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "mg";
+                symbol.Category = "Injection quantity";
+                symbol.Subcategory = "Driver demand";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("MAF correction"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Load";
+                symbol.Z_axis_descr = "Correction (%)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "%";
+                symbol.Category = "Air mass";
+                symbol.Subcategory = "Correction";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("MAF linearization"))
+            {
+                symbol.X_axis_length = 16;
+                symbol.Y_axis_length = 1;
+                symbol.Length = 16 * 2;
+                symbol.X_axis_descr = "Sensor voltage (V)";
+                symbol.Y_axis_descr = "";
+                symbol.Z_axis_descr = "Air mass (mg/stroke)";
+                symbol.XaxisUnits = "V";
+                symbol.YaxisUnits = "";
+                symbol.Category = "Air mass";
+                symbol.Subcategory = "Sensor";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("MAP linearization"))
+            {
+                symbol.X_axis_length = 16;
+                symbol.Y_axis_length = 1;
+                symbol.Length = 16 * 2;
+                symbol.X_axis_descr = "Sensor voltage (V)";
+                symbol.Y_axis_descr = "";
+                symbol.Z_axis_descr = "Pressure (mbar)";
+                symbol.XaxisUnits = "V";
+                symbol.YaxisUnits = "";
+                symbol.Category = "Air mass";
+                symbol.Subcategory = "Sensor";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else if (mapName.Contains("Boost correction"))
+            {
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 6;
+                symbol.Length = 10 * 6 * 2;
+                symbol.X_axis_descr = "Engine speed (rpm)";
+                symbol.Y_axis_descr = "Temperature (°C)";
+                symbol.Z_axis_descr = "Correction (%)";
+                symbol.XaxisUnits = "RPM";
+                symbol.YaxisUnits = "°C";
+                symbol.Category = "Turbo";
+                symbol.Subcategory = "Correction";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+            else
+            {
+                // Paramètres par défaut si le type de carte n'est pas reconnu
+                symbol.X_axis_length = 10;
+                symbol.Y_axis_length = 8;
+                symbol.Length = 10 * 8 * 2;
+                symbol.X_axis_descr = "X Axis";
+                symbol.Y_axis_descr = "Y Axis";
+                symbol.Z_axis_descr = "Values";
+                symbol.Category = "Custom";
+                symbol.Subcategory = "Custom map";
+                symbol.Correction = 1.0;
+                symbol.Offset = 0.0;
+            }
+        }
         private void TryToLoadAdditionalSymbols(string filename, ImportFileType importFileType, SymbolCollection symbolCollection, bool fromRepository)
         {
             if (importFileType == ImportFileType.XML)
@@ -5083,6 +6985,9 @@ namespace VAGSuite
             dt.Columns.Add("SYMBOLNUMBER", Type.GetType("System.Int32"));
             dt.Columns.Add("FLASHADDRESS", Type.GetType("System.Int32"));
             dt.Columns.Add("DESCRIPTION");
+            dt.Columns.Add("ISCREATED", Type.GetType("System.Boolean"));
+            dt.Columns.Add("XAXISADDRESS", Type.GetType("System.Int32"));
+            dt.Columns.Add("YAXISADDRESS", Type.GetType("System.Int32"));
             if (ImportFromRepository)
             {
                 byte[] allBytes = File.ReadAllBytes(filename);
@@ -5112,6 +7017,9 @@ namespace VAGSuite
                     dt.Columns.Add("SYMBOLNUMBER", Type.GetType("System.Int32"));
                     dt.Columns.Add("FLASHADDRESS", Type.GetType("System.Int32"));
                     dt.Columns.Add("DESCRIPTION");
+                    dt.Columns.Add("ISCREATED", Type.GetType("System.Boolean"));
+                    dt.Columns.Add("XAXISADDRESS", Type.GetType("System.Int32"));
+                    dt.Columns.Add("YAXISADDRESS", Type.GetType("System.Int32"));
                     if (File.Exists(filename))
                     {
                         dt.ReadXml(filename);
@@ -5125,7 +7033,15 @@ namespace VAGSuite
                 {
                     try
                     {
-                        //if (dr["SYMBOLNAME"].ToString() == sh.Varname)
+                        // Vérifier si ce n'est pas une carte créée (pour les cartes existantes)
+                        bool isCreated = false;
+                        if (dt.Columns.Contains("ISCREATED"))
+                        {
+                            if (dr["ISCREATED"] != DBNull.Value)
+                                isCreated = Convert.ToBoolean(dr["ISCREATED"]);
+                        }
+
+                        if (!isCreated)
                         {
                             if (sh.Flash_start_address == Convert.ToInt32(dr["FLASHADDRESS"]))
                             {
@@ -5134,13 +7050,57 @@ namespace VAGSuite
                             }
                         }
                     }
-                    catch (Exception E)
+                    catch (Exception ex)
                     {
-                        Console.WriteLine(E.Message);
+                        Console.WriteLine("Erreur lors du traitement d'un symbole existant: " + ex.Message);
                     }
                 }
             }
+            foreach (DataRow dr in dt.Rows)
+            {
+                try
+                {
+                    // Vérifier si c'est une carte créée
+                    bool isCreated = false;
+                    if (dt.Columns.Contains("ISCREATED"))
+                    {
+                        if (dr["ISCREATED"] != DBNull.Value)
+                            isCreated = Convert.ToBoolean(dr["ISCREATED"]);
+                    }
+                    else if (dr["SYMBOLNAME"].ToString().Contains("(créé)"))
+                    {
+                        isCreated = true;
+                    }
+
+                    if (isCreated)
+                    {
+                        // Restaurer la carte créée si elle n'existe pas déjà
+                        bool alreadyExists = false;
+                        int address = Convert.ToInt32(dr["FLASHADDRESS"]);
+
+                        foreach (SymbolHelper sh in coll2load)
+                        {
+                            if (sh.Flash_start_address == address)
+                            {
+                                alreadyExists = true;
+                                break;
+                            }
+                        }
+
+                        if (!alreadyExists)
+                            RestoreCreatedMap(dr, coll2load);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Erreur lors de la restauration d'une carte créée: " + ex.Message);
+                }
+            }
+
+            //return true;
             return retval;
+
+
         }
 
         private string GetFileDescriptionFromFile(string file)
@@ -5700,60 +7660,91 @@ namespace VAGSuite
         {
             try
             {
-                // Adresse pour vérifier si le véhicule a un FAP
-                int fapEquippedAddress = 0x123456; // À remplacer par l'adresse réelle
+                // Obtenir l'adresse du FAP pour cet ECU
+                int fapAddress = GetMapAddress("FAP");
+
+                if (fapAddress == 0)
+                {
+                    // Essayer d'autres noms possibles
+                    fapAddress = GetMapAddress("DPF");
+                    if (fapAddress == 0)
+                        fapAddress = GetMapAddress("Particulate Filter");
+                }
+
+                // Si toujours pas d'adresse, utiliser l'adresse par défaut
+                if (fapAddress == 0)
+                {
+                    // Adresse par défaut selon la marque
+                    if (_currentECUType.Contains("BMW"))
+                        fapAddress = 0x23F180;
+                    else if (_currentECUType.Contains("AUDI"))
+                        fapAddress = 0x158462;
+                    else
+                        fapAddress = 0x123456;
+                }
 
                 // Vérifier si l'adresse est valide
-                if (fapEquippedAddress < fileBytes.Length)
+                if (fapAddress < fileBytes.Length)
                 {
-                    // Si la valeur à cette adresse est 0x01, le FAP est activé
-                    isFAPEnabled = (fileBytes[fapEquippedAddress] == 0x01);
-
-                    // Activer ou désactiver le bouton FAP en fonction de la présence du FAP
+                    // Vérifier la valeur à cette adresse
+                    isFAPEnabled = (fileBytes[fapAddress] == 0x01);
                     btnDisableFAP.Enabled = true;
                 }
                 else
                 {
-                    // Si l'adresse est invalide, désactiver le bouton FAP
                     btnDisableFAP.Enabled = false;
-                    MessageBox.Show("Impossible de détecter le FAP dans ce fichier.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erreur lors de la détection du FAP : " + ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine("Erreur lors de la détection du FAP : " + ex.Message);
                 btnDisableFAP.Enabled = false;
             }
         }
 
-        // Détecte l'état du Start & Stop
         private void DetectStartStopStatus(byte[] fileBytes)
         {
             try
             {
-                // Adresse pour vérifier l'état du Start & Stop
-                int startStopAddress = 0x654321; // À remplacer par l'adresse réelle
+                // Obtenir l'adresse du Start/Stop pour cet ECU
+                int startStopAddress = GetMapAddress("StartStop");
+
+                if (startStopAddress == 0)
+                {
+                    // Essayer d'autres noms possibles
+                    startStopAddress = GetMapAddress("MSA");
+                    if (startStopAddress == 0)
+                        startStopAddress = GetMapAddress("Auto Start Stop");
+                }
+
+                // Si toujours pas d'adresse, utiliser l'adresse par défaut
+                if (startStopAddress == 0)
+                {
+                    // Adresse par défaut selon la marque
+                    if (_currentECUType.Contains("BMW"))
+                        startStopAddress = 0x18E240;
+                    else if (_currentECUType.Contains("AUDI"))
+                        startStopAddress = 0x1A2468;
+                    else
+                        startStopAddress = 0x654321;
+                }
 
                 // Vérifier si l'adresse est valide
                 if (startStopAddress < fileBytes.Length)
                 {
-                    // Si la valeur à cette adresse est 0x01, le Start & Stop est activé
+                    // Vérifier la valeur à cette adresse
                     isStartStopEnabled = (fileBytes[startStopAddress] == 0x01);
-
-                    // Activer le bouton Start & Stop
                     btnToggleStartStop.Enabled = true;
                 }
                 else
                 {
-                    // Si l'adresse est invalide, désactiver le bouton Start & Stop
                     btnToggleStartStop.Enabled = false;
-                    //MessageBox.Show("Impossible de détecter la fonctionnalité Start & Stop dans ce fichier.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erreur lors de la détection du Start & Stop : " + ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //btnToggleStartStop.Enabled = false;
+                Console.WriteLine("Erreur lors de la détection du Start/Stop : " + ex.Message);
+                btnToggleStartStop.Enabled = false;
             }
         }
 
@@ -5769,6 +7760,392 @@ namespace VAGSuite
             btnToggleStartStop.Enabled = isFileLoaded;
         }
 
-        
+        public class CreatedMap
+        {
+            public string SymbolName { get; set; }
+            public int FlashAddress { get; set; }
+            public int Length { get; set; }
+            public int XAxisLength { get; set; }
+            public int YAxisLength { get; set; }
+            public int XAxisAddress { get; set; }
+            public int YAxisAddress { get; set; }
+            public string XAxisDescription { get; set; }
+            public string YAxisDescription { get; set; }
+            public string ZAxisDescription { get; set; }
+            public double Correction { get; set; }
+            public double Offset { get; set; }
+            public string Category { get; set; }
+            public string Subcategory { get; set; }
+            public string XAxisUnits { get; set; }
+            public string YAxisUnits { get; set; }
+
+            // Convertir un symbole existant en CreatedMap
+            public static CreatedMap FromSymbol(SymbolHelper symbol)
+            {
+                return new CreatedMap
+                {
+                    SymbolName = symbol.Varname,
+                    FlashAddress = (int)symbol.Flash_start_address,
+                    Length = symbol.Length,
+                    XAxisLength = symbol.X_axis_length,
+                    YAxisLength = symbol.Y_axis_length,
+                    XAxisAddress = symbol.X_axis_address,
+                    YAxisAddress = symbol.Y_axis_address,
+                    XAxisDescription = symbol.X_axis_descr,
+                    YAxisDescription = symbol.Y_axis_descr,
+                    ZAxisDescription = symbol.Z_axis_descr,
+                    Correction = symbol.Correction,
+                    Offset = symbol.Offset,
+                    Category = symbol.Category,
+                    Subcategory = symbol.Subcategory,
+                    XAxisUnits = symbol.XaxisUnits,
+                    YAxisUnits = symbol.YaxisUnits
+                };
+            }
+
+            // Convertir cette CreatedMap en SymbolHelper
+            public SymbolHelper ToSymbol()
+            {
+                SymbolHelper symbol = new SymbolHelper();
+                symbol.Varname = this.SymbolName;
+                symbol.Flash_start_address = this.FlashAddress;
+                symbol.Length = this.Length;
+                symbol.X_axis_length = this.XAxisLength;
+                symbol.Y_axis_length = this.YAxisLength;
+                symbol.X_axis_address = this.XAxisAddress;
+                symbol.Y_axis_address = this.YAxisAddress;
+                symbol.X_axis_descr = this.XAxisDescription;
+                symbol.Y_axis_descr = this.YAxisDescription;
+                symbol.Z_axis_descr = this.ZAxisDescription;
+                symbol.Correction = this.Correction;
+                symbol.Offset = this.Offset;
+                symbol.Category = this.Category;
+                symbol.Subcategory = this.Subcategory;
+                symbol.XaxisUnits = this.XAxisUnits;
+                symbol.YaxisUnits = this.YAxisUnits;
+                return symbol;
+            }
+        }
+
+        // Méthode pour sauvegarder les cartes créées
+        private void SaveCreatedMaps(string fileName)
+        {
+            try
+            {
+                // Récupérer toutes les cartes créées
+                List<CreatedMap> createdMaps = new List<CreatedMap>();
+
+                foreach (SymbolHelper symbol in Tools.Instance.m_symbols)
+                {
+                    if (symbol.Varname.Contains("(créé)"))
+                    {
+                        createdMaps.Add(CreatedMap.FromSymbol(symbol));
+                    }
+                }
+
+                // Sauvegarder dans un fichier JSON adjacent au fichier ECU
+                string metadataFile = Path.Combine(
+                    Path.GetDirectoryName(fileName),
+                    Path.GetFileNameWithoutExtension(fileName) + ".createdmaps"
+                );
+
+                // Utiliser BinaryFormatter pour une sérialisation robuste
+                using (FileStream fs = new FileStream(metadataFile, FileMode.Create))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(fs, createdMaps);
+                }
+
+                Console.WriteLine("Sauvegarde de " + createdMaps.Count + " cartes créées dans " + metadataFile);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur lors de la sauvegarde des cartes créées: " + ex.Message);
+            }
+        }
+
+        // Méthode pour charger les cartes créées
+        private void LoadCreatedMaps(string fileName)
+        {
+            try
+            {
+                string metadataFile = Path.Combine(
+                    Path.GetDirectoryName(fileName),
+                    Path.GetFileNameWithoutExtension(fileName) + ".createdmaps"
+                );
+
+                if (File.Exists(metadataFile))
+                {
+                    List<CreatedMap> createdMaps;
+
+                    using (FileStream fs = new FileStream(metadataFile, FileMode.Open))
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        createdMaps = (List<CreatedMap>)formatter.Deserialize(fs);
+                    }
+
+                    // Ajouter les cartes à la collection de symboles
+                    foreach (CreatedMap map in createdMaps)
+                    {
+                        // Vérifier si la carte existe déjà pour éviter les doublons
+                        bool exists = false;
+                        foreach (SymbolHelper symbol in Tools.Instance.m_symbols)
+                        {
+                            if (symbol.Flash_start_address == map.FlashAddress)
+                            {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!exists)
+                        {
+                            Tools.Instance.m_symbols.Add(map.ToSymbol());
+                        }
+                    }
+
+                    Console.WriteLine("Chargement de " + createdMaps.Count + " cartes créées depuis " + metadataFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur lors du chargement des cartes créées: " + ex.Message);
+            }
+        }
+
+        private struct BinarySymbolRecord
+        {
+            public const int RECORD_SIZE = 64; // Taille fixe pour chaque enregistrement
+
+            public uint Signature;      // 4 octets: signature "CSYM"
+            public uint FlashAddress;   // 4 octets: adresse dans le fichier
+            public ushort Length;       // 2 octets: longueur totale
+            public ushort RowCount;     // 2 octets: nombre de lignes
+            public ushort ColumnCount;  // 2 octets: nombre de colonnes
+            public uint XAxisAddress;   // 4 octets: adresse de l'axe X
+            public uint YAxisAddress;   // 4 octets: adresse de l'axe Y
+            public float Correction;    // 4 octets: facteur de correction
+            public float Offset;        // 4 octets: offset
+                                        // Les autres 34 octets peuvent contenir le nom et les descriptions en format compressé
+        }
+
+        private int FindOrCreateSymbolSection(string fileName)
+        {
+            byte[] fileData = File.ReadAllBytes(fileName);
+
+            // Rechercher la signature de la section des symboles créés
+            byte[] signature = new byte[] { 0x43, 0x53, 0x59, 0x4D, 0x53, 0x45, 0x43, 0x54 }; // "CSYMSECT"
+
+            for (int i = 0; i < fileData.Length - signature.Length; i++)
+            {
+                bool found = true;
+                for (int j = 0; j < signature.Length; j++)
+                {
+                    if (fileData[i + j] != signature[j])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    // Nous avons trouvé la section
+                    return i + signature.Length;
+                }
+            }
+
+            // Aucune section trouvée, créer une nouvelle section à la fin du fichier
+            int endOfFile = fileData.Length;
+
+            // Ajouter 8192 octets pour notre section de symboles (environ 128 symboles)
+            byte[] newSection = new byte[8192 + signature.Length];
+
+            // Copier la signature
+            Array.Copy(signature, 0, newSection, 0, signature.Length);
+
+            // Tout le reste est initialisé à 0xFF (espace libre)
+            for (int i = signature.Length; i < newSection.Length; i++)
+            {
+                newSection[i] = 0xFF;
+            }
+
+            // Append to the end of the file
+            using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Write))
+            {
+                fs.Seek(endOfFile, SeekOrigin.Begin);
+                fs.Write(newSection, 0, newSection.Length);
+            }
+
+            return endOfFile + signature.Length;
+        }
+        private void SaveSymbolToBinaryFile(SymbolHelper symbol, string fileName)
+        {
+            // Trouver la section des symboles
+            int sectionStart = FindOrCreateSymbolSection(fileName);
+
+            // Chercher un emplacement libre dans la section
+            byte[] fileData = File.ReadAllBytes(fileName);
+            int recordPosition = -1;
+
+            // Vérifier si ce symbole existe déjà (par son adresse)
+            for (int pos = sectionStart; pos < sectionStart + 8192; pos += BinarySymbolRecord.RECORD_SIZE)
+            {
+                // Lire la signature et l'adresse
+                uint recordSignature = BitConverter.ToUInt32(fileData, pos);
+                uint recordAddress = BitConverter.ToUInt32(fileData, pos + 4);
+
+                if (recordSignature == 0x4D595343) // "CSYM"
+                {
+                    if (recordAddress == symbol.Flash_start_address)
+                    {
+                        // Ce symbole existe déjà, mettre à jour sa position
+                        recordPosition = pos;
+                        break;
+                    }
+                }
+                else if (recordSignature == 0xFFFFFFFF || recordSignature == 0)
+                {
+                    // Emplacement libre trouvé
+                    if (recordPosition == -1)
+                        recordPosition = pos;
+                }
+            }
+
+            if (recordPosition == -1)
+            {
+                // Pas d'emplacement libre trouvé
+                throw new Exception("Aucun emplacement libre trouvé pour enregistrer le symbole");
+            }
+
+            // Créer l'enregistrement binaire
+            byte[] recordData = new byte[BinarySymbolRecord.RECORD_SIZE];
+
+            // Signature "CSYM"
+            BitConverter.GetBytes((uint)0x4D595343).CopyTo(recordData, 0);
+
+            // Adresse du symbole
+            BitConverter.GetBytes((uint)symbol.Flash_start_address).CopyTo(recordData, 4);
+
+            // Longueur
+            BitConverter.GetBytes((ushort)symbol.Length).CopyTo(recordData, 8);
+
+            // Dimensions
+            BitConverter.GetBytes((ushort)symbol.X_axis_length).CopyTo(recordData, 10);
+            BitConverter.GetBytes((ushort)symbol.Y_axis_length).CopyTo(recordData, 12);
+
+            // Adresses des axes
+            BitConverter.GetBytes((uint)symbol.X_axis_address).CopyTo(recordData, 14);
+            BitConverter.GetBytes((uint)symbol.Y_axis_address).CopyTo(recordData, 18);
+
+            // Facteurs de correction
+            BitConverter.GetBytes((float)symbol.Correction).CopyTo(recordData, 22);
+            BitConverter.GetBytes((float)symbol.Offset).CopyTo(recordData, 26);
+
+            // Nom du symbole (compressé)
+            byte[] nameBytes = Encoding.ASCII.GetBytes(symbol.Varname);
+            int maxNameBytes = Math.Min(nameBytes.Length, 20);
+            Array.Copy(nameBytes, 0, recordData, 30, maxNameBytes);
+
+            // Écrire l'enregistrement dans le fichier
+            using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Write))
+            {
+                fs.Seek(recordPosition, SeekOrigin.Begin);
+                fs.Write(recordData, 0, recordData.Length);
+            }
+        }
+        private void LoadSymbolsFromBinaryFile(string fileName, SymbolCollection symbols)
+        {
+            try
+            {
+                byte[] fileData = File.ReadAllBytes(fileName);
+
+                // Rechercher la signature de la section
+                byte[] signature = new byte[] { 0x43, 0x53, 0x59, 0x4D, 0x53, 0x45, 0x43, 0x54 }; // "CSYMSECT"
+                int sectionStart = -1;
+
+                for (int i = 0; i < fileData.Length - signature.Length; i++)
+                {
+                    bool found = true;
+                    for (int j = 0; j < signature.Length; j++)
+                    {
+                        if (fileData[i + j] != signature[j])
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        sectionStart = i + signature.Length;
+                        break;
+                    }
+                }
+
+                if (sectionStart == -1)
+                {
+                    // Pas de section trouvée
+                    return;
+                }
+
+                // Parcourir les enregistrements
+                for (int pos = sectionStart; pos < Math.Min(sectionStart + 8192, fileData.Length - BinarySymbolRecord.RECORD_SIZE); pos += BinarySymbolRecord.RECORD_SIZE)
+                {
+                    // Lire la signature
+                    uint recordSignature = BitConverter.ToUInt32(fileData, pos);
+
+                    if (recordSignature == 0x4D595343) // "CSYM"
+                    {
+                        // Créer un nouveau symbole
+                        SymbolHelper symbol = new SymbolHelper();
+
+                        // Récupérer les informations
+                        symbol.Flash_start_address = BitConverter.ToUInt32(fileData, pos + 4);
+                        symbol.Length = BitConverter.ToUInt16(fileData, pos + 8);
+                        symbol.X_axis_length = BitConverter.ToUInt16(fileData, pos + 10);
+                        symbol.Y_axis_length = BitConverter.ToUInt16(fileData, pos + 12);
+                        symbol.X_axis_address = (int)BitConverter.ToUInt32(fileData, pos + 14);
+                        symbol.Y_axis_address = (int)BitConverter.ToUInt32(fileData, pos + 18);
+                        symbol.Correction = BitConverter.ToSingle(fileData, pos + 22);
+                        symbol.Offset = BitConverter.ToSingle(fileData, pos + 26);
+
+                        // Récupérer le nom (rechercher le premier octet nul ou la fin des données)
+                        int nameEnd = pos + 30;
+                        while (nameEnd < pos + 50 && fileData[nameEnd] != 0)
+                            nameEnd++;
+
+                        symbol.Varname = Encoding.ASCII.GetString(fileData, pos + 30, nameEnd - (pos + 30));
+
+                        // Si le nom est vide, générer un nom par défaut
+                        if (string.IsNullOrEmpty(symbol.Varname))
+                            symbol.Varname = "Carte créée à " + symbol.Flash_start_address.ToString("X8");
+
+                        // Définir les descriptions des axes en fonction du nom
+                        SetDefaultMapParameters(symbol, symbol.Varname.Replace(" (créé)", ""));
+
+                        // Ajouter le symbole à la collection (éviter les doublons)
+                        bool exists = false;
+                        foreach (SymbolHelper existingSymbol in symbols)
+                        {
+                            if (existingSymbol.Flash_start_address == symbol.Flash_start_address)
+                            {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!exists)
+                            symbols.Add(symbol);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erreur lors du chargement des symboles depuis le fichier binaire: " + ex.Message);
+            }
+        }
+
+
     }
 }

@@ -81,3 +81,5 @@ C:\Users\AGL\Documents\SOURCE\VAGEDCSuiteProject\VAGEDCSuite\Source\obj\Debug\VA
 C:\Users\AGL\Documents\SOURCE\VAGEDCSuiteProject\VAGEDCSuite\Source\obj\Debug\VAGSuite.exe
 C:\Users\AGL\Documents\SOURCE\VAGEDCSuiteProject\VAGEDCSuite\Source\obj\Debug\VAGSuite.pdb
 C:\Users\AGL\Documents\SOURCE\VAGEDCSuiteProject\VAGEDCSuite\Source\bin\Debug\DevExpress.XtraBars.v11.2.dll
+C:\Users\AGL\Documents\SOURCE\VAGEDCSuiteProject\VAGEDCSuite\Source\bin\Debug\Newtonsoft.Json.dll
+C:\Users\AGL\Documents\SOURCE\VAGEDCSuiteProject\VAGEDCSuite\Source\bin\Debug\Newtonsoft.Json.xml

@@ -1,0 +1,476 @@
+{
+    "BMW_DDE4": {
+      "Driver wish": {
+        "Address": "0x52416",
+        "Length": "0x29C",
+        "Columns": 16,
+        "Rows": 12,
+        "Description": "Driver wish map for BMW E46",
+        "AlternativeNames": ["FahrPedal_Kennfeld", "Pedal_Map", "Gaspedalkennlinie"]
+      },
+      "Torque limiter": {
+        "Address": "0x42188",
+        "Length": "0x218",
+        "Columns": 16,
+        "Rows": 10,
+        "Description": "Torque limiter map for BMW E46",
+        "AlternativeNames": ["Drehmoment_Begrenzer", "MaxDrehmoment", "Drehmomentbegrenzung"]
+      },
+      "Smoke limiter": {
+        "Address": "0x3A760",
+        "Length": "0xE2",
+        "Columns": 12,
+        "Rows": 10,
+        "Description": "Smoke limiter map for BMW E46",
+        "AlternativeNames": ["Rauchbegrenzung", "Smoke_Control", "RauchKennfeld"]
+      },
+      "Target boost": {
+        "Address": "0x27624",
+        "Length": "0x1EE",
+        "Columns": 16,
+        "Rows": 8,
+        "Description": "Target boost map for BMW E46 330d",
+        "AlternativeNames": ["Ladedruck_Sollwert", "Boost_Target", "SollLadedruck"]
+      },
+      "Boost pressure limiter": {
+        "Address": "0x28A42",
+        "Length": "0x1A8",
+        "Columns": 16,
+        "Rows": 7,
+        "Description": "Boost pressure limiter map for BMW E46",
+        "AlternativeNames": ["Ladedruck_Begrenzung", "MaxLadedruck"]
+      },
+      "EGR": {
+        "Address": "0x362A8",
+        "Length": "0x1D8",
+        "Columns": 12,
+        "Rows": 10,
+        "Description": "EGR map for BMW E46",
+        "AlternativeNames": ["AGR_Kennfeld", "Exhaust_Gas_Recirculation", "AGR_Rate"]
+      },
+      "Injector duration": {
+        "Address": "0x4B764",
+        "Length": "0x288",
+        "Columns": 16,
+        "Rows": 10,
+        "Description": "Injector duration map for BMW E46",
+        "AlternativeNames": ["Einspritzdauer", "Injection_Time"]
+      },
+      "Start of injection": {
+        "Address": "0x4C218",
+        "Length": "0x1D8",
+        "Columns": 16,
+        "Rows": 8,
+        "Description": "Start of injection map for BMW E46",
+        "AlternativeNames": ["Einspritzbeginn", "SOI", "Injection_Timing"]
+      },
+      "FAP": {
+        "Address": "0x23FA12",
+        "Length": "0x1",
+        "Columns": 1,
+        "Rows": 1,
+        "Description": "FAP/DPF control for BMW E46",
+        "AlternativeNames": ["DPF", "Particulate_Filter", "Partikelfilter"]
+      },
+      "StartStop": {
+        "Address": "0x0",
+        "Length": "0x1",
+        "Columns": 1,
+        "Rows": 1,
+        "Description": "Start/Stop not available on E46",
+        "AlternativeNames": ["MSA", "Auto_Start_Stop"]
+      }
+    },
+    "BMW_DDE5": {
+      "Driver wish": {
+        "Address": "0x50824",
+        "Length": "0x4F4",
+        "Columns": 16,
+        "Rows": 16,
+        "Description": "Driver wish map for BMW E90/E60",
+        "AlternativeNames": ["FahrPedal_Kennfeld", "Pedal_Map", "Gaspedalkennlinie"]
+      },
+      "Torque limiter": {
+        "Address": "0x45612",
+        "Length": "0x230",
+        "Columns": 16,
+        "Rows": 12,
+        "Description": "Torque limiter map for BMW E90/E60",
+        "AlternativeNames": ["Drehmoment_Begrenzer", "MaxDrehmoment"]
+      },
+      "Smoke limiter": {
+        "Address": "0x3C218",
+        "Length": "0x1EC",
+        "Columns": 16,
+        "Rows": 10,
+        "Description": "Smoke limiter map for BMW E90/E60",
+        "AlternativeNames": ["Rauchbegrenzung", "Smoke_Control"]
+      },
+      "Target boost": {
+        "Address": "0x2A428",
+        "Length": "0x1EE",
+        "Columns": 16,
+        "Rows": 8,
+        "Description": "Target boost map for BMW E90/E60",
+        "AlternativeNames": ["Ladedruck_Sollwert", "Boost_Target"]
+      },
+      "Boost pressure limiter": {
+        "Address": "0x2B624",
+        "Length": "0x1A8",
+        "Columns": 16,
+        "Rows": 7,
+        "Description": "Boost pressure limiter map for BMW E90/E60",
+        "AlternativeNames": ["Ladedruck_Begrenzung", "MaxLadedruck"]
+      },
+      "EGR": {
+        "Address": "0x39216",
+        "Length": "0x1DC",
+        "Columns": 16,
+        "Rows": 10,
+        "Description": "EGR map for BMW E90/E60",
+        "AlternativeNames": ["AGR_Kennfeld", "Exhaust_Gas_Recirculation"]
+      },
+      "Injector duration": {
+        "Address": "0x4E420",
+        "Length": "0x288",
+        "Columns": 16,
+        "Rows": 10,
+        "Description": "Injector duration map for BMW E90/E60",
+        "AlternativeNames": ["Einspritzdauer", "Injection_Time"]
+      },
+      "Start of injection": {
+        "Address": "0x4F218",
+        "Length": "0x1D8",
+        "Columns": 16,
+        "Rows": 8,
+        "Description": "Start of injection map for BMW E90/E60",
+        "AlternativeNames": ["Einspritzbeginn", "SOI", "Injection_Timing"]
+      },
+      "FAP": {
+        "Address": "0x23F180",
+        "Length": "0x1",
+        "Columns": 1,
+        "Rows": 1,
+        "Description": "FAP/DPF control for BMW E90/E60",
+        "AlternativeNames": ["DPF", "Particulate_Filter"]
+      },
+      "StartStop": {
+        "Address": "0x0",
+        "Length": "0x1",
+        "Columns": 1,
+        "Rows": 1,
+        "Description": "Start/Stop not available on most E90/E60",
+        "AlternativeNames": ["MSA", "Auto_Start_Stop"]
+      }
+    },
+    "BMW_DDE6": {
+      "Driver wish": {
+        "Address": "0x61FC8",
+        "Length": "0x248",
+        "Columns": 16,
+        "Rows": 16,
+        "Description": "Driver wish map for BMW F10/F30",
+        "AlternativeNames": ["FahrPedal_Kennfeld", "Pedal_Map"]
+      },
+      "Torque limiter": {
+        "Address": "0x48F24",
+        "Length": "0x1FC",
+        "Columns": 16,
+        "Rows": 12,
+        "Description": "Torque limiter map for BMW F10/F30",
+        "AlternativeNames": ["Drehmoment_Begrenzer", "MaxDrehmoment"]
+      },
+      "Target boost": {
+        "Address": "0x2D280",
+        "Length": "0x1F2",
+        "Columns": 16,
+        "Rows": 8,
+        "Description": "Target boost map for BMW F10/F30",
+        "AlternativeNames": ["Ladedruck_Sollwert", "Boost_Target"]
+      },
+      "EGR": {
+        "Address": "0x3B412",
+        "Length": "0x212",
+        "Columns": 16,
+        "Rows": 10,
+        "Description": "EGR map for BMW F10/F30",
+        "AlternativeNames": ["AGR_Kennfeld", "Exhaust_Gas_Recirculation"]
+      },
+      "FAP": {
+        "Address": "0x2A4C24",
+        "Length": "0x1",
+        "Columns": 1,
+        "Rows": 1,
+        "Description": "FAP/DPF control for BMW F10/F30",
+        "AlternativeNames": ["DPF", "Particulate_Filter"]
+      },
+      "StartStop": {
+        "Address": "0x18E240",
+        "Length": "0x1",
+        "Columns": 1,
+        "Rows": 1,
+        "Description": "Start/Stop control for BMW F10/F30",
+        "AlternativeNames": ["MSA", "Auto_Start_Stop"]
+      }
+    },
+    "AUDI_EDC16": {
+    "Driver wish": {
+      "Address": "0x41284",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Driver wish map for Audi EDC16",
+      "AlternativeNames": ["Fahrerwunsch", "Kennfeld_Fahrpedal", "Audi_Driver_Wish"]
+    },
+    "Torque limiter": {
+      "Address": "0x44652",
+      "Length": "0x220",
+      "Columns": 16,
+      "Rows": 10,
+      "Description": "Torque limiter map for Audi EDC16",
+      "AlternativeNames": ["Audi_Torque_Limiter", "Maximum_Torque", "Drehmoment_Max"]
+    },
+    "Smoke limiter": {
+      "Address": "0x3A140",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Smoke limiter map for Audi EDC16",
+      "AlternativeNames": ["Audi_Smoke_Limiter", "Smoke_Control", "Rauch_Begrenzung"]
+    },
+    "Target boost": {
+      "Address": "0x2E624",
+      "Length": "0x200",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Target boost map for Audi EDC16",
+      "AlternativeNames": ["Audi_Target_Boost", "Soll_Ladedruck", "Requested_Boost"]
+    },
+    "Boost pressure limiter": {
+      "Address": "0x2F824",
+      "Length": "0x200",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Boost pressure limiter map for Audi EDC16",
+      "AlternativeNames": ["Audi_Boost_Limiter", "Max_Boost", "Ladedruck_Max"]
+    },
+    "Boost pressure guard": {
+      "Address": "0x2FA24",
+      "Length": "0x200",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Boost pressure guard map for Audi EDC16",
+      "AlternativeNames": ["SVBL", "Boost_Guard", "Ladedruck_Schutz"]
+    },
+    "N75 duty cycle": {
+      "Address": "0x31280",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "N75 duty cycle map for Audi EDC16",
+      "AlternativeNames": ["N75_Map", "Duty_Cycle", "N75_Ansteuerung"]
+    },
+    "EGR": {
+      "Address": "0x38460",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "EGR map for Audi EDC16",
+      "AlternativeNames": ["Audi_EGR", "Abgasrückführung", "AGR_Kennfeld"]
+    },
+    "Injector duration": {
+      "Address": "0x48642",
+      "Length": "0x280",
+      "Columns": 16,
+      "Rows": 10,
+      "Description": "Injector duration map for Audi EDC16",
+      "AlternativeNames": ["Injection_Duration", "Einspritzdauer", "Injector_Time"]
+    },
+    "Start of injection": {
+      "Address": "0x47240",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Start of injection map for Audi EDC16",
+      "AlternativeNames": ["SOI", "Einspritzbeginn", "Injection_Start"]
+    },
+    "IQ by MAP limiter": {
+      "Address": "0x42460",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "IQ by MAP limiter for Audi EDC16",
+      "AlternativeNames": ["IQ_MAP", "Einspritzmenge_MAP", "Fuel_Quantity_MAP"]
+    },
+    "IQ by MAF limiter": {
+      "Address": "0x42640",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "IQ by MAF limiter for Audi EDC16",
+      "AlternativeNames": ["IQ_MAF", "Einspritzmenge_MAF", "Fuel_Quantity_MAF"]
+    },
+    "SOI limiter": {
+      "Address": "0x47420",
+      "Length": "0x1E0",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "SOI limiter map for Audi EDC16",
+      "AlternativeNames": ["SOI_Limiter", "Einspritzbeginn_Grenze", "Start_Injection_Limit"]
+    },
+    "Start IQ": {
+      "Address": "0x48140",
+      "Length": "0x1A0",
+      "Columns": 10,
+      "Rows": 10,
+      "Description": "Start injection quantity map for Audi EDC16",
+      "AlternativeNames": ["Start_IQ", "Starteinspritzung", "Start_Fuel_Quantity"]
+    },
+    "FAP": {
+      "Address": "0x158462",
+      "Length": "0x1",
+      "Columns": 1,
+      "Rows": 1,
+      "Description": "FAP/DPF control for Audi EDC16",
+      "AlternativeNames": ["DPF", "Particulate_Filter", "Partikelfilter"]
+    },
+    "StartStop": {
+      "Address": "0x1A2468",
+      "Length": "0x1",
+      "Columns": 1,
+      "Rows": 1,
+      "Description": "Start/Stop control for newer Audi models",
+      "AlternativeNames": ["MSA", "Auto_Start_Stop", "Start_Stop_System"]
+    }
+  },
+  "AUDI_EDC17": {
+    "Driver wish": {
+      "Address": "0x62480",
+      "Length": "0x280",
+      "Columns": 20,
+      "Rows": 12,
+      "Description": "Driver wish map for Audi EDC17",
+      "AlternativeNames": ["Fahrerwunsch", "Kennfeld_Fahrpedal", "Audi_Driver_Wish"]
+    },
+    "Torque limiter": {
+      "Address": "0x51240",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Torque limiter map for Audi EDC17",
+      "AlternativeNames": ["Audi_Torque_Limiter", "Maximum_Torque", "Drehmoment_Max"]
+    },
+    "Smoke limiter": {
+      "Address": "0x48210",
+      "Length": "0x200",
+      "Columns": 16,
+      "Rows": 8,
+      "Description": "Smoke limiter map for Audi EDC17",
+      "AlternativeNames": ["Audi_Smoke_Limiter", "Smoke_Control", "Rauch_Begrenzung"]
+    },
+    "Target boost": {
+      "Address": "0x34218",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Target boost map for Audi EDC17",
+      "AlternativeNames": ["Audi_Target_Boost", "Soll_Ladedruck", "Requested_Boost"]
+    },
+    "Boost pressure limiter": {
+      "Address": "0x34460",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Boost pressure limiter map for Audi EDC17",
+      "AlternativeNames": ["Audi_Boost_Limiter", "Max_Boost", "Ladedruck_Max"]
+    },
+    "Boost pressure guard": {
+      "Address": "0x34680",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Boost pressure guard map for Audi EDC17",
+      "AlternativeNames": ["SVBL", "Boost_Guard", "Ladedruck_Schutz"]
+    },
+    "N75 duty cycle": {
+      "Address": "0x36480",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "N75 duty cycle map for Audi EDC17",
+      "AlternativeNames": ["N75_Map", "Duty_Cycle", "N75_Ansteuerung"]
+    },
+    "EGR": {
+      "Address": "0x42180",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "EGR map for Audi EDC17",
+      "AlternativeNames": ["Audi_EGR", "Abgasrückführung", "AGR_Kennfeld"]
+    },
+    "Injector duration": {
+      "Address": "0x54240",
+      "Length": "0x280",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Injector duration map for Audi EDC17",
+      "AlternativeNames": ["Injection_Duration", "Einspritzdauer", "Injector_Time"]
+    },
+    "Start of injection": {
+      "Address": "0x52460",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "Start of injection map for Audi EDC17",
+      "AlternativeNames": ["SOI", "Einspritzbeginn", "Injection_Start"]
+    },
+    "IQ by MAP limiter": {
+      "Address": "0x48640",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "IQ by MAP limiter for Audi EDC17",
+      "AlternativeNames": ["IQ_MAP", "Einspritzmenge_MAP", "Fuel_Quantity_MAP"]
+    },
+    "IQ by MAF limiter": {
+      "Address": "0x48880",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "IQ by MAF limiter for Audi EDC17",
+      "AlternativeNames": ["IQ_MAF", "Einspritzmenge_MAF", "Fuel_Quantity_MAF"]
+    },
+    "SOI limiter": {
+      "Address": "0x52680",
+      "Length": "0x240",
+      "Columns": 16,
+      "Rows": 12,
+      "Description": "SOI limiter map for Audi EDC17",
+      "AlternativeNames": ["SOI_Limiter", "Einspritzbeginn_Grenze", "Start_Injection_Limit"]
+    },
+    "Start IQ": {
+      "Address": "0x53120",
+      "Length": "0x1C0",
+      "Columns": 10,
+      "Rows": 10,
+      "Description": "Start injection quantity map for Audi EDC17",
+      "AlternativeNames": ["Start_IQ", "Starteinspritzung", "Start_Fuel_Quantity"]
+    },
+    "FAP": {
+      "Address": "0x18A246",
+      "Length": "0x1",
+      "Columns": 1,
+      "Rows": 1,
+      "Description": "FAP/DPF control for Audi EDC17",
+      "AlternativeNames": ["DPF", "Particulate_Filter", "Partikelfilter"]
+    },
+    "StartStop": {
+      "Address": "0x1C2862",
+      "Length": "0x1",
+      "Columns": 1,
+      "Rows": 1,
+      "Description": "Start/Stop control for Audi EDC17",
+      "AlternativeNames": ["MSA", "Auto_Start_Stop", "Start_Stop_System"]
+    }
+  }
+}
