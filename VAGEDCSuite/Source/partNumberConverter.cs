@@ -15657,6 +15657,327 @@ namespace VAGSuite
                     fuelType = "Diesel";
                     softwareID = "46774779";
                     break;
+
+                // EDC15C2 Series pour Citroën
+                //case "0281001782":
+                //    carMake = "Citroën";
+                //    carType = "Berlingo";
+                //    ecuType = "EDC15C2";
+                //    fuelType = "Diesel";
+                //    break;
+                case "0281010138":
+                    carMake = "Citroën";
+                    ecuType = "EDC15C2-6.1";
+                    fuelType = "Diesel";
+                    softwareID = "9636255480";
+                    break;
+                //case "0281010250":
+                //    carMake = "Citroën";
+                //    carType = "C5";
+                //    ecuType = "EDC15C2-6.1";
+                //    fuelType = "Diesel";
+                //    softwareID = "9637089980";
+                //    break;
+                case "0281010499":
+                    carMake = "Citroën";
+                    carType = "Xsara";
+                    ecuType = "EDC15C2";
+                    fuelType = "Diesel";
+                    engineType = "2.0 HDI 90";
+                    break;
+                case "0281010597":
+                    carMake = "Citroën";
+                    carType = "C5";
+                    ecuType = "EDC15C2";
+                    fuelType = "Diesel";
+                    engineType = "2.2 HDI";
+                    break;
+                case "0281010876":
+                    carMake = "Citroën";
+                    carType = "C8";
+                    ecuType = "EDC15C2";
+                    fuelType = "Diesel";
+                    engineType = "2.2 HDI 136";
+                    softwareID = "1037364307";
+                    break;
+                case "0281012141":
+                    carMake = "Citroën";
+                    carType = "C8";
+                    ecuType = "EDC15C2";
+                    fuelType = "Diesel";
+                    engineType = "2.2 HDI";
+                    softwareID = "9661145280";
+                    break;
+
+                // EDC16C34 Series pour Citroën
+                case "0281011089":
+                    carMake = "Citroën";
+                    carType = "C3";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9653202580";
+                    break;
+                case "0281011560":
+                    carMake = "Citroën";
+                    carType = "C3";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9656162180";
+                    break;
+                case "0281011561":
+                    carMake = "Citroën";
+                    carType = "C3 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9658274580";
+                    break;
+                case "0281011629":
+                    carMake = "Citroën";
+                    carType = "C4";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    engineType = "1.6 HDI 110";
+                    softwareID = "9651132880";
+                    break;
+                case "0281011630":
+                    carMake = "Citroën";
+                    carType = "C4";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9658576080";
+                    break;
+                case "0281011633":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    engineType = "1.6 HDI 110";
+                    softwareID = "9658578180";
+                    break;
+                case "0281011634":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9660324180";
+                    break;
+                case "0281011783":
+                    carMake = "Citroën";
+                    carType = "Xsara Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9658556780";
+                    break;
+                case "0281011784":
+                    carMake = "Citroën";
+                    carType = "DS3";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9655919780";
+                    break;
+                case "0281011785":
+                    carMake = "Citroën";
+                    carType = "C3";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9658556880";
+                    break;
+                case "0281011802":
+                    carMake = "Citroën";
+                    carType = "C4";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9656841080";
+                    break;
+                case "0281011803":
+                    carMake = "Citroën";
+                    carType = "Berlingo";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9656161980";
+                    break;
+                case "0281011804":
+                    carMake = "Citroën";
+                    carType = "Jumpy";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9660942380";
+                    break;
+                case "0281011861":
+                    carMake = "Citroën";
+                    carType = "C4";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9657061180";
+                    break;
+                case "0281011863":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9661773380";
+                    break;
+                case "0281012465":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9663786480";
+                    break;
+                case "0281012466":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    softwareID = "9661773880";
+                    break;
+                case "0281012523":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    break;
+                case "0281012980":
+                    carMake = "Citroën";
+                    carType = "C4 Picasso";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    engineType = "1.6 HDI";
+                    softwareID = "9664617480";
+                    break;
+                case "0281013869":
+                    carMake = "Citroën";
+                    carType = "Expert";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    engineType = "1.6 HDI 90";
+                    softwareID = "1037393467";
+                    break;
+                case "0281013872":
+                    carMake = "Citroën";
+                    carType = "C3";
+                    ecuType = "EDC16C34";
+                    fuelType = "Diesel";
+                    engineType = "1.6 HDI 90";
+                    softwareID = "1037389546";
+                    break;
+
+                // EDC17C60 Series pour Citroën
+                case "0281030544":
+                    carMake = "Citroën";
+                    carType = "C3/C4";
+                    ecuType = "EDC17C60";
+                    fuelType = "Diesel";
+                    engineType = "1.6 e-HDI";
+                    softwareID = "9808535880";
+                    break;
+
+                // EDC16C39 Series pour Citroën
+                case "0281016xxx": // Remplacer xxx par le numéro exact trouvé
+                    carMake = "Citroën";
+                    carType = "Jumper";
+                    ecuType = "EDC16C39";
+                    fuelType = "Diesel";
+                    break;
+
+                
+                //case "0281010876":
+                //    carMake = "Peugeot";
+                //    carType = "807";
+                //    ecuType = "EDC15C2";
+                //    fuelType = "Diesel";
+                //    engineType = "2.2 HDI 136";
+                //    softwareID = "1037364307";
+                //    break;
+                case "0281011083":
+                    carMake = "Peugeot";
+                    carType = "206";
+                    ecuType = "EDC15C2";
+                    fuelType = "Diesel";
+                    engineType = "2.0 HDI";
+                    softwareID = "9648394480";
+                    break;
+                
+
+                // EDC16C3 Series pour Peugeot
+                case "0281010390":
+                    carMake = "Peugeot";
+                    carType = "206";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9651398880";
+                    break;
+                case "0281010707":
+                    carMake = "Peugeot";
+                    carType = "206";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9647785780";
+                    break;
+                
+                case "0281011090":
+                    carMake = "Peugeot";
+                    carType = "307";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9653202680";
+                    break;
+                case "0281011233":
+                    carMake = "Peugeot";
+                    carType = "206";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9655600680";
+                    break;
+                case "0281011234":
+                    carMake = "Peugeot";
+                    carType = "307";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9655698280";
+                    break;
+                case "0281011558":
+                    carMake = "Peugeot";
+                    carType = "206";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9655930780";
+                    break;
+                case "0281012625":
+                    carMake = "Peugeot";
+                    carType = "307";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9659728280";
+                    break;
+                case "0281013331":
+                    carMake = "Peugeot";
+                    carType = "206";
+                    ecuType = "EDC16C3";
+                    fuelType = "Diesel";
+                    engineType = "1.4 HDI";
+                    softwareID = "9662213180";
+                    break;
+
+                // EDC16C34 Series pour Peugeot  
+               
+                case "0281033849":
+                    carMake = "Peugeot";
+                    carType = "308/3008";
+                    ecuType = "EDC17C60";
+                    fuelType = "Diesel";
+                    engineType = "1.6 e-HDI";
+                    softwareID = "9822917680";
+                    break;
+
                 case "0281001487":
                 case "0281001955":
                 case "0281010333":
@@ -15831,13 +16152,13 @@ namespace VAGSuite
                     fuelType = "Diesel";
                     engineType = "BJK";
                     break;
-                case "0281011083":
-                    carMake = "Peugeot";
-                    carType = "206";
-                    fuelType = "Diesel";
-                    softwareID = "9648394480";
-                    ecuType = "EDC15C2";
-                    break;
+                //case "0281011083":
+                //    carMake = "Peugeot";
+                //    carType = "206";
+                //    fuelType = "Diesel";
+                //    softwareID = "9648394480";
+                //    ecuType = "EDC15C2";
+                //    break;
                 case "0281010250":
                     carMake = "Peugeot";
                     carType = "206";

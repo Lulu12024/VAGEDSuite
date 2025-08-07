@@ -71,6 +71,8 @@ using System.Xml;
 using Newtonsoft.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
+using static DevExpress.Charts.Native.SideBySideBarInteractionAlgorithm;
+using System.Net;
 
 namespace VAGSuite
 {
@@ -705,7 +707,625 @@ namespace VAGSuite
             defaultDefs["BMW_DDE4"] = bmwMaps;
 
             // Ajouter d'autres marques...
+            // Ajout des définitions CITROËN EDC15C2
+            var citroenEdc15Maps = new Dictionary<string, MapDefinition>();
+            citroenEdc15Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x1A240,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Driver wish map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Consigne_conducteur", "Demande_conducteur", "Pedale_accelerateur" }
+            };
+            citroenEdc15Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x1A440,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Torque limiter map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            citroenEdc15Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x1A640,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Smoke limiter map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            citroenEdc15Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x1A840,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Target boost map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            citroenEdc15Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x1AA40,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Injection quantity map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+            citroenEdc15Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x1AC40,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Start of injection map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            citroenEdc15Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x1AE40,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Rail pressure map for Citroën EDC15C2",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
 
+            defaultDefs["CITROEN_EDC15C2"] = citroenEdc15Maps;
+
+            // Ajout des définitions CITROËN EDC16C34
+            var citroenEdc16Maps = new Dictionary<string, MapDefinition>();
+            citroenEdc16Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x2A240,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Driver wish map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Consigne_conducteur", "Demande_conducteur", "Pedale_accelerateur" }
+            };
+            citroenEdc16Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x2A4C0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Torque limiter map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            citroenEdc16Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x2A740,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Smoke limiter map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            citroenEdc16Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x2A9C0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Target boost map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            citroenEdc16Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x2AC40,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Injection quantity map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+            citroenEdc16Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x2AEC0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Start of injection map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            citroenEdc16Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x2B140,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Rail pressure map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
+            citroenEdc16Maps["EGR position"] = new MapDefinition
+            {
+                Address = 0x2B3C0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "EGR position map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Position_EGR", "EGR_ouverture", "Vanne_EGR" }
+            };
+            citroenEdc16Maps["Turbo position"] = new MapDefinition
+            {
+                Address = 0x2B640,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Turbo position map for Citroën EDC16C34",
+                AlternativeNames = new List<string> { "Position_turbo", "Geometrie_variable", "VGT_position" }
+            };
+
+            defaultDefs["CITROEN_EDC16C34"] = citroenEdc16Maps;
+
+            // Ajout des définitions CITROËN EDC17C60
+            var citroenEdc17Maps = new Dictionary<string, MapDefinition>();
+            citroenEdc17Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x4A240,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Driver wish map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Consigne_conducteur", "Demande_conducteur", "Pedale_accelerateur" }
+            };
+            citroenEdc17Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x4A540,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Torque limiter map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            citroenEdc17Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x4A840,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Smoke limiter map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            citroenEdc17Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x4AB40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Target boost map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            citroenEdc17Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x4AE40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Injection quantity map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+            citroenEdc17Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x4B140,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Start of injection map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            citroenEdc17Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x4B440,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Rail pressure map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
+            citroenEdc17Maps["EGR position"] = new MapDefinition
+            {
+                Address = 0x4B740,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "EGR position map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Position_EGR", "EGR_ouverture", "Vanne_EGR" }
+            };
+            citroenEdc17Maps["Turbo position"] = new MapDefinition
+            {
+                Address = 0x4BA40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Turbo position map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Position_turbo", "Geometrie_variable", "VGT_position" }
+            };
+            citroenEdc17Maps["Air mass"] = new MapDefinition
+            {
+                Address = 0x4BD40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Air mass map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Masse_air", "Debit_air", "Mass_air_flow" }
+            };
+            citroenEdc17Maps["Fuel temperature"] = new MapDefinition
+            {
+                Address = 0x4C040,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Fuel temperature map for Citroën EDC17C60",
+                AlternativeNames = new List<string> { "Temperature_carburant", "Temp_gasoil", "Temperature_fuel" }
+            };
+
+            defaultDefs["CITROEN_EDC17C60"] = citroenEdc17Maps;
+
+            // Ajout des définitions PEUGEOT EDC15C2
+            var peugeotEdc15Maps = new Dictionary<string, MapDefinition>();
+            peugeotEdc15Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x1A240,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Driver wish map for Peugeot EDC15C2",
+                AlternativeNames = new List<string> { "Demande_conducteur", "Pedale_accelerateur", "Consigne_conducteur" }
+            };
+            peugeotEdc15Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x1A440,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Torque limiter map for Peugeot EDC15C2",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            peugeotEdc15Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x1A640,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Smoke limiter map for Peugeot EDC15C2",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            peugeotEdc15Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x1A840,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Target boost map for Peugeot EDC15C2",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            peugeotEdc15Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x1AA40,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Injection quantity map for Peugeot EDC15C2",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+
+            // Ajout des définitions PEUGEOT EDC16C3 (moteurs 1.4 HDI)
+            var peugeotEdc16c3Maps = new Dictionary<string, MapDefinition>();
+            peugeotEdc16c3Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x2ADC0,
+                Length = 576,
+                Columns = 16,
+                Rows = 18,
+                Description = "Start of injection map for Peugeot EDC16C3",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            peugeotEdc16c3Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x2B040,
+                Length = 576,
+                Columns = 16,
+                Rows = 18,
+                Description = "Rail pressure map for Peugeot EDC16C3",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
+            peugeotEdc16c3Maps["EGR position"] = new MapDefinition
+            {
+                Address = 0x2B2C0,
+                Length = 576,
+                Columns = 16,
+                Rows = 18,
+                Description = "EGR position map for Peugeot EDC16C3",
+                AlternativeNames = new List<string> { "Position_EGR", "EGR_ouverture", "Vanne_EGR" }
+            };
+
+            defaultDefs["PEUGEOT_EDC16C3"] = peugeotEdc16c3Maps;
+
+            // Ajout des définitions PEUGEOT EDC16C34 (moteurs 1.6 HDI)
+            var peugeotEdc16c34Maps = new Dictionary<string, MapDefinition>();
+            peugeotEdc16c34Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x2A240,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Driver wish map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Demande_conducteur", "Pedale_accelerateur", "Consigne_conducteur" }
+            };
+            peugeotEdc16c34Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x2A4C0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Torque limiter map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            peugeotEdc16c34Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x2A740,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Smoke limiter map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            peugeotEdc16c34Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x2A9C0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Target boost map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            peugeotEdc16c34Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x2AC40,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Injection quantity map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+            peugeotEdc16c34Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x2AEC0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Start of injection map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            peugeotEdc16c34Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x2B140,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Rail pressure map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
+            peugeotEdc16c34Maps["EGR position"] = new MapDefinition
+            {
+                Address = 0x2B3C0,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "EGR position map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Position_EGR", "EGR_ouverture", "Vanne_EGR" }
+            };
+            peugeotEdc16c34Maps["Turbo position"] = new MapDefinition
+            {
+                Address = 0x2B640,
+                Length = 648,
+                Columns = 18,
+                Rows = 18,
+                Description = "Turbo position map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Position_turbo", "Geometrie_variable", "VGT_position" }
+            };
+            peugeotEdc16c34Maps["DPF regeneration"] = new MapDefinition
+            {
+                Address = 0x2B8C0,
+                Length = 324,
+                Columns = 18,
+                Rows = 9,
+                Description = "DPF regeneration map for Peugeot EDC16C34",
+                AlternativeNames = new List<string> { "Regeneration_FAP", "FAP_regen", "DPF_regen" }
+            };
+
+            defaultDefs["PEUGEOT_EDC16C34"] = peugeotEdc16c34Maps;
+
+            // Ajout des définitions PEUGEOT EDC17C60 (moteurs e-HDI)
+            var peugeotEdc17Maps = new Dictionary<string, MapDefinition>();
+            peugeotEdc17Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x4A240,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Driver wish map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Demande_conducteur", "Pedale_accelerateur", "Consigne_conducteur" }
+            };
+            peugeotEdc17Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x4A540,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Torque limiter map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            peugeotEdc17Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x4A840,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Smoke limiter map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            peugeotEdc17Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x4AB40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Target boost map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            peugeotEdc17Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x4AE40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Injection quantity map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+            peugeotEdc17Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x4B140,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Start of injection map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            peugeotEdc17Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x4B440,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Rail pressure map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
+            peugeotEdc17Maps["EGR position"] = new MapDefinition
+            {
+                Address = 0x4B740,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "EGR position map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Position_EGR", "EGR_ouverture", "Vanne_EGR" }
+            };
+            peugeotEdc17Maps["Turbo position"] = new MapDefinition
+            {
+                Address = 0x4BA40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Turbo position map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Position_turbo", "Geometrie_variable", "VGT_position" }
+            };
+            peugeotEdc17Maps["Air mass"] = new MapDefinition
+            {
+                Address = 0x4BD40,
+                Length = 800,
+                Columns = 20,
+                Rows = 20,
+                Description = "Air mass map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Masse_air", "Debit_air", "Mass_air_flow" }
+            };
+            peugeotEdc17Maps["Fuel temperature"] = new MapDefinition
+            {
+                Address = 0x4C040,
+                Length = 512,
+                Columns = 16,
+                Rows = 16,
+                Description = "Fuel temperature map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Temperature_carburant", "Temp_gasoil", "Temperature_fuel" }
+            };
+            peugeotEdc17Maps["DPF regeneration"] = new MapDefinition
+            {
+                Address = 0x4C340,
+                Length = 400,
+                Columns = 20,
+                Rows = 10,
+                Description = "DPF regeneration map for Peugeot EDC17C60",
+                AlternativeNames = new List<string> { "Regeneration_FAP", "FAP_regen", "DPF_regen" }
+            };
+
+            defaultDefs["PEUGEOT_EDC17C60"] = peugeotEdc17Maps;
+
+            // Ajout des définitions PEUGEOT EDC15C7 (anciens moteurs 1.9 JTD)
+            var peugeotEdc15c7Maps = new Dictionary<string, MapDefinition>();
+            peugeotEdc15c7Maps["Driver wish"] = new MapDefinition
+            {
+                Address = 0x1A140,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Driver wish map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Demande_conducteur", "Pedale_accelerateur", "Consigne_conducteur" }
+            };
+            peugeotEdc15c7Maps["Torque limiter"] = new MapDefinition
+            {
+                Address = 0x1A340,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Torque limiter map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Limiteur_couple", "Couple_maximum", "Limitation_couple" }
+            };
+            peugeotEdc15c7Maps["Smoke limiter"] = new MapDefinition
+            {
+                Address = 0x1A540,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Smoke limiter map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite" }
+            };
+            peugeotEdc15c7Maps["Target boost"] = new MapDefinition
+            {
+                Address = 0x1A740,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Target boost map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne" }
+            };
+            peugeotEdc15c7Maps["Injection quantity"] = new MapDefinition
+            {
+                Address = 0x1A940,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Injection quantity map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Quantite_injection", "Debit_injecteur", "Quantite_carburant" }
+            };
+            peugeotEdc15c7Maps["Start of injection"] = new MapDefinition
+            {
+                Address = 0x1AB40,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Start of injection map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Debut_injection", "Avance_injection", "SOI" }
+            };
+            peugeotEdc15c7Maps["Rail pressure"] = new MapDefinition
+            {
+                Address = 0x1AD40,
+                Length = 480,
+                Columns = 15,
+                Rows = 16,
+                Description = "Rail pressure map for Peugeot EDC15C7",
+                AlternativeNames = new List<string> { "Pression_rampe", "Common_rail", "Pression_rail_carburant" }
+            };
+
+            defaultDefs["PEUGEOT_EDC15C7"] = peugeotEdc15c7Maps;
+
+
+        // Ajout des définitions PSA génériques
+        defaultDefs["PSA_EDC15C2"] = citroenEdc15Maps;
+            defaultDefs["PSA_EDC16C34"] = citroenEdc16Maps;
+            defaultDefs["PSA_EDC17C60"] = citroenEdc17Maps;
             // Sauvegarder le fichier
             string jsonContent = JsonConvert.SerializeObject(defaultDefs, Newtonsoft.Json.Formatting.Indented);
 
@@ -776,6 +1396,198 @@ namespace VAGSuite
                     return "AUDI_MED";
             }
 
+            // Si c'est un Citroën
+            if (basicInfo.CarMake.Contains("Citroën") || basicInfo.CarMake.Contains("CITROËN"))
+            {
+                // Détection des signatures spécifiques Citroën
+                if (SearchForSignature(fileBytes, "BOSCH EDC17C60"))
+                    return "CITROEN_EDC17C60";
+                if (SearchForSignature(fileBytes, "EDC16C34"))
+                    return "CITROEN_EDC16C34";
+                if (SearchForSignature(fileBytes, "EDC16C39"))
+                    return "CITROEN_EDC16C39";
+                if (SearchForSignature(fileBytes, "EDC15C2"))
+                    return "CITROEN_EDC15C2";
+
+                // Détection par signature PSA (Peugeot-Citroën)
+                if (SearchForSignature(fileBytes, "PSA") || SearchForSignature(fileBytes, "CITROEN"))
+                {
+                    // Estimation par taille du fichier
+                    if (fileBytes.Length <= 524288) // 512Ko - généralement EDC15C2
+                        return "CITROEN_EDC15C2";
+                    else if (fileBytes.Length <= 1048576) // 1Mo - généralement EDC16C34
+                        return "CITROEN_EDC16C34";
+                    else if (fileBytes.Length <= 2097152) // 2Mo - généralement EDC17C60
+                        return "CITROEN_EDC17C60";
+                }
+
+                // Détection par numéros de série PSA (commencent par 96xx)
+                if (basicInfo.SoftwareID.StartsWith("96") || basicInfo.SoftwareID.StartsWith("98"))
+                {
+                    if (fileBytes.Length <= 524288)
+                        return "CITROEN_EDC15C2";
+                    else if (fileBytes.Length <= 1048576)
+                        return "CITROEN_EDC16C34";
+                    else
+                        return "CITROEN_EDC17C60";
+                }
+            }
+
+            // Si c'est un calculateur PSA générique (partagé Peugeot/Citroën)
+            if (basicInfo.CarMake.Contains("PSA") || basicInfo.SoftwareID.StartsWith("96") || basicInfo.SoftwareID.StartsWith("98"))
+            {
+                if (SearchForSignature(fileBytes, "EDC17"))
+                    return "PSA_EDC17C60";
+                if (SearchForSignature(fileBytes, "EDC16"))
+                    return "PSA_EDC16C34";
+                if (SearchForSignature(fileBytes, "EDC15"))
+                    return "PSA_EDC15C2";
+
+                // Estimation par taille
+                if (fileBytes.Length <= 524288)
+                    return "PSA_EDC15C2";
+                else if (fileBytes.Length <= 1048576)
+                    return "PSA_EDC16C34";
+                else
+                    return "PSA_EDC17C60";
+            }
+
+            // Si c'est un Peugeot
+            if (basicInfo.CarMake.Contains("Peugeot") || basicInfo.CarMake.Contains("PEUGEOT"))
+            {
+                // Détection des signatures spécifiques Peugeot
+                if (SearchForSignature(fileBytes, "BOSCH EDC17C60"))
+                    return "PEUGEOT_EDC17C60";
+                if (SearchForSignature(fileBytes, "EDC16C34"))
+                    return "PEUGEOT_EDC16C34";
+                if (SearchForSignature(fileBytes, "EDC16C3"))
+                    return "PEUGEOT_EDC16C3";
+                if (SearchForSignature(fileBytes, "EDC16C39"))
+                    return "PEUGEOT_EDC16C39";
+                if (SearchForSignature(fileBytes, "EDC15C2"))
+                    return "PEUGEOT_EDC15C2";
+                if (SearchForSignature(fileBytes, "EDC15C7"))
+                    return "PEUGEOT_EDC15C7";
+
+                // Détection par signature PSA (Peugeot-Citroën)
+                if (SearchForSignature(fileBytes, "PSA") || SearchForSignature(fileBytes, "PEUGEOT"))
+                {
+                    // Estimation par taille du fichier
+                    if (fileBytes.Length <= 524288) // 512Ko - généralement EDC15C2
+                        return "PEUGEOT_EDC15C2";
+                    else if (fileBytes.Length <= 1048576) // 1Mo - généralement EDC16C34/C3
+                        return "PEUGEOT_EDC16C34";
+                    else if (fileBytes.Length <= 2097152) // 2Mo - généralement EDC17C60
+                        return "PEUGEOT_EDC17C60";
+                }
+
+                // Détection par numéros de série PSA (commencent par 96xx, 98xx)
+                if (basicInfo.SoftwareID.StartsWith("96") || basicInfo.SoftwareID.StartsWith("98") ||
+                    basicInfo.SoftwareID.StartsWith("103"))
+                {
+                    if (fileBytes.Length <= 524288)
+                        return "PEUGEOT_EDC15C2";
+                    else if (fileBytes.Length <= 1048576)
+                    {
+                        // Différencier EDC16C3 et EDC16C34 par la taille et contenu
+                        if (SearchForSignature(fileBytes, "EDC16C3") || fileBytes.Length <= 786432) // 768Ko
+                            return "PEUGEOT_EDC16C3";
+                        else
+                            return "PEUGEOT_EDC16C34";
+                    }
+                    else
+                        return "PEUGEOT_EDC17C60";
+                }
+
+                // Détection par type de moteur
+                if (basicInfo.EngineType.Contains("1.4") && basicInfo.EngineType.Contains("HDI"))
+                {
+                    if (fileBytes.Length <= 786432) // 768Ko
+                        return "PEUGEOT_EDC16C3";
+                    else
+                        return "PEUGEOT_EDC16C34";
+                }
+                else if (basicInfo.EngineType.Contains("1.6") && basicInfo.EngineType.Contains("HDI"))
+                {
+                    if (basicInfo.EngineType.Contains("e-HDI"))
+                        return "PEUGEOT_EDC17C60";
+                    else
+                        return "PEUGEOT_EDC16C34";
+                }
+                else if (basicInfo.EngineType.Contains("2.0") && basicInfo.EngineType.Contains("HDI"))
+                {
+                    return "PEUGEOT_EDC15C2";
+                }
+            }
+
+
+            // Si c'est un Peugeot
+            if (basicInfo.CarMake.Contains("Peugeot") || basicInfo.CarMake.Contains("PEUGEOT"))
+            {
+                // Détection des signatures spécifiques Peugeot
+                if (SearchForSignature(fileBytes, "BOSCH EDC17C60"))
+                    return "PEUGEOT_EDC17C60";
+                if (SearchForSignature(fileBytes, "EDC16C34"))
+                    return "PEUGEOT_EDC16C34";
+                if (SearchForSignature(fileBytes, "EDC16C3"))
+                    return "PEUGEOT_EDC16C3";
+                if (SearchForSignature(fileBytes, "EDC16C39"))
+                    return "PEUGEOT_EDC16C39";
+                if (SearchForSignature(fileBytes, "EDC15C2"))
+                    return "PEUGEOT_EDC15C2";
+                if (SearchForSignature(fileBytes, "EDC15C7"))
+                    return "PEUGEOT_EDC15C7";
+
+                // Détection par signature PSA (Peugeot-Citroën)
+                if (SearchForSignature(fileBytes, "PSA") || SearchForSignature(fileBytes, "PEUGEOT"))
+                {
+                    // Estimation par taille du fichier
+                    if (fileBytes.Length <= 524288) // 512Ko - généralement EDC15C2
+                        return "PEUGEOT_EDC15C2";
+                    else if (fileBytes.Length <= 1048576) // 1Mo - généralement EDC16C34/C3
+                        return "PEUGEOT_EDC16C34";
+                    else if (fileBytes.Length <= 2097152) // 2Mo - généralement EDC17C60
+                        return "PEUGEOT_EDC17C60";
+                }
+
+                // Détection par numéros de série PSA (commencent par 96xx, 98xx)
+                if (basicInfo.SoftwareID.StartsWith("96") || basicInfo.SoftwareID.StartsWith("98") ||
+                    basicInfo.SoftwareID.StartsWith("103"))
+                {
+                    if (fileBytes.Length <= 524288)
+                        return "PEUGEOT_EDC15C2";
+                    else if (fileBytes.Length <= 1048576)
+                    {
+                        // Différencier EDC16C3 et EDC16C34 par la taille et contenu
+                        if (SearchForSignature(fileBytes, "EDC16C3") || fileBytes.Length <= 786432) // 768Ko
+                            return "PEUGEOT_EDC16C3";
+                        else
+                            return "PEUGEOT_EDC16C34";
+                    }
+                    else
+                        return "PEUGEOT_EDC17C60";
+                }
+
+                // Détection par type de moteur
+                if (basicInfo.EngineType.Contains("1.4") && basicInfo.EngineType.Contains("HDI"))
+                {
+                    if (fileBytes.Length <= 786432) // 768Ko
+                        return "PEUGEOT_EDC16C3";
+                    else
+                        return "PEUGEOT_EDC16C34";
+                }
+                else if (basicInfo.EngineType.Contains("1.6") && basicInfo.EngineType.Contains("HDI"))
+                {
+                    if (basicInfo.EngineType.Contains("e-HDI"))
+                        return "PEUGEOT_EDC17C60";
+                    else
+                        return "PEUGEOT_EDC16C34";
+                }
+                else if (basicInfo.EngineType.Contains("2.0") && basicInfo.EngineType.Contains("HDI"))
+                {
+                    return "PEUGEOT_EDC15C2";
+                }
+            }
             // Retourne le type par défaut si aucun match spécifique
             return ecuType;
         }
@@ -809,8 +1621,13 @@ namespace VAGSuite
         // Méthode pour rechercher une signature dans le fichier
         private bool SearchForSignature(byte[] fileBytes, string signature)
         {
+            if (fileBytes == null || string.IsNullOrEmpty(signature))
+                return false;
+
             byte[] signatureBytes = Encoding.ASCII.GetBytes(signature);
-            for (int i = 0; i < fileBytes.Length - signatureBytes.Length; i++)
+
+            // Recherche dans tout le fichier
+            for (int i = 0; i <= fileBytes.Length - signatureBytes.Length; i++)
             {
                 bool found = true;
                 for (int j = 0; j < signatureBytes.Length; j++)
@@ -821,10 +1638,33 @@ namespace VAGSuite
                         break;
                     }
                 }
+
                 if (found)
                     return true;
             }
+
             return false;
+        }
+
+
+        /// <summary>
+        /// Recherche une signature avec des variations de casse
+        /// </summary>
+        /// <param name="fileBytes">Tableau d'octets du fichier</param>
+        /// <param name="signature">Signature à rechercher</param>
+        /// <returns>True si la signature est trouvée, false sinon</returns>
+        private bool SearchForSignatureIgnoreCase(byte[] fileBytes, string signature)
+        {
+            // Recherche en majuscules
+            if (SearchForSignature(fileBytes, signature.ToUpper()))
+                return true;
+
+            // Recherche en minuscules
+            if (SearchForSignature(fileBytes, signature.ToLower()))
+                return true;
+
+            // Recherche tel quel
+            return SearchForSignature(fileBytes, signature);
         }
 
 
@@ -944,6 +1784,7 @@ namespace VAGSuite
                         break;
                 }
             }
+
             else if (ecuType.Contains("AUDI") || carMake.Contains("AUDI"))
             {
                 switch (mapName)
@@ -968,7 +1809,196 @@ namespace VAGSuite
                         break;
                 }
             }
+            // Ajout des noms spécifiques par type d'ECU pour Citroën
+            if (ecuType.Contains("CITROEN") || carMake.Contains("Citroën") || ecuType.Contains("PSA"))
+            {
+                switch (mapName)
+                {
+                    case "Driver wish":
+                        names.AddRange(new[] {
+                            "Consigne_conducteur", "Demande_conducteur", "Pedale_accelerateur",
+                            "Accelerator_pedal", "Fahrer_wunsch", "Conducteur_souhait"
+                        });
+                        break;
+                    case "Torque limiter":
+                        names.AddRange(new[] {
+                            "Limiteur_couple", "Couple_maximum", "Limitation_couple",
+                            "Torque_limit", "Drehmoment_begrenzer", "Max_couple"
+                        });
+                        break;
+                    case "Smoke limiter":
+                        names.AddRange(new[] {
+                            "Limiteur_fumees", "Controle_fumees", "Smoke_limit",
+                            "Limiteur_opacite", "Opacite_maximale", "Fumee_limite"
+                        });
+                        break;
+                    case "Target boost":
+                        names.AddRange(new[] {
+                            "Consigne_suralimentation", "Pression_suralim", "Boost_target",
+                            "Turbo_consigne", "Suralimentation_cible", "Pression_admission"
+                        });
+                        break;
+                    case "Boost pressure limiter":
+                        names.AddRange(new[] {
+                            "Limiteur_suralimentation", "Pression_max_turbo", "Max_boost",
+                            "Limiteur_pression_admission", "Suralimentation_limite"
+                        });
+                        break;
+                    case "Injection quantity":
+                        names.AddRange(new[] {
+                            "Quantite_injection", "Debit_injecteur", "Injection_qty",
+                            "Quantite_carburant", "Debit_carburant", "Qty_injection"
+                        });
+                        break;
+                    case "Start of injection":
+                        names.AddRange(new[] {
+                            "Debut_injection", "Avance_injection", "SOI",
+                            "Timing_injection", "Calage_injection", "Start_injection"
+                        });
+                        break;
+                    case "Injection pressure":
+                        names.AddRange(new[] {
+                            "Pression_injection", "Pression_rail", "Rail_pressure",
+                            "Common_rail_pressure", "Pression_rampe", "Injection_press"
+                        });
+                        break;
+                    case "EGR position":
+                        names.AddRange(new[] {
+                            "Position_EGR", "EGR_ouverture", "Vanne_EGR",
+                            "EGR_valve", "Recirculation_gaz", "EGR_pos"
+                        });
+                        break;
+                    case "Turbo position":
+                        names.AddRange(new[] {
+                            "Position_turbo", "Geometrie_variable", "VGT_position",
+                            "Turbo_geometry", "Variable_geometry", "VNT_position"
+                        });
+                        break;
+                    case "Rail pressure":
+                        names.AddRange(new[] {
+                            "Pression_rampe", "Common_rail", "Rail_press",
+                            "Pression_rail_carburant", "Rampe_pression"
+                        });
+                        break;
+                    case "Fuel temperature":
+                        names.AddRange(new[] {
+                            "Temperature_carburant", "Temp_gasoil", "Fuel_temp",
+                            "Temperature_fuel", "Temp_carburant"
+                        });
+                        break;
+                    case "Air mass":
+                        names.AddRange(new[] {
+                            "Masse_air", "Debit_air", "Air_flow",
+                            "Mass_air_flow", "MAF", "Debit_masse_air"
+                        });
+                        break;
+                }
+            }
 
+            // Ajout des noms spécifiques par type d'ECU pour Peugeot
+            if (ecuType.Contains("PEUGEOT") || carMake.Contains("Peugeot"))
+            {
+                switch (mapName)
+                {
+                    case "Driver wish":
+                        names.AddRange(new[] {
+                            "Demande_conducteur", "Pedale_accelerateur", "Consigne_conducteur",
+                            "Accelerator_pedal", "Driver_request", "Conducteur_demande",
+                            "Peugeot_Driver_Wish", "Fahrer_wunsch"
+                        });
+                        break;
+                    case "Torque limiter":
+                        names.AddRange(new[] {
+                            "Limiteur_couple", "Couple_maximum", "Limitation_couple",
+                            "Torque_limit", "Max_couple", "Peugeot_Torque_Limiter",
+                            "Drehmoment_begrenzer", "Couple_max"
+                        });
+                        break;
+                    case "Smoke limiter":
+                        names.AddRange(new[] {
+                            "Limiteur_fumees", "Controle_fumees", "Limiteur_opacite",
+                            "Smoke_limit", "Opacite_maximale", "Fumee_limite",
+                            "Peugeot_Smoke_Limiter", "Smoke_control"
+                        });
+                        break;
+                    case "Target boost":
+                        names.AddRange(new[] {
+                            "Consigne_suralimentation", "Pression_suralim", "Turbo_consigne",
+                            "Boost_target", "Suralimentation_cible", "Pression_admission",
+                            "Peugeot_Target_Boost", "Soll_ladedruck"
+                        });
+                        break;
+                    case "Boost pressure limiter":
+                        names.AddRange(new[] {
+                            "Limiteur_suralimentation", "Pression_max_turbo", "Max_boost",
+                            "Limiteur_pression_admission", "Suralimentation_limite",
+                            "Peugeot_Boost_Limiter", "Ladedruck_max"
+                        });
+                        break;
+                    case "Injection quantity":
+                        names.AddRange(new[] {
+                            "Quantite_injection", "Debit_injecteur", "Quantite_carburant",
+                            "Injection_qty", "Debit_carburant", "Qty_injection",
+                            "Peugeot_IQ", "Einspritzmenge"
+                        });
+                        break;
+                    case "Start of injection":
+                        names.AddRange(new[] {
+                            "Debut_injection", "Avance_injection", "Timing_injection",
+                            "SOI", "Calage_injection", "Start_injection",
+                            "Peugeot_SOI", "Einspritzbeginn"
+                        });
+                        break;
+                    case "Injection pressure":
+                        names.AddRange(new[] {
+                            "Pression_injection", "Pression_rail", "Common_rail_pressure",
+                            "Rail_pressure", "Pression_rampe", "Injection_press",
+                            "Peugeot_Rail_Pressure", "Kraftstoffdruck"
+                        });
+                        break;
+                    case "EGR position":
+                        names.AddRange(new[] {
+                            "Position_EGR", "EGR_ouverture", "Vanne_EGR",
+                            "EGR_valve", "Recirculation_gaz", "EGR_pos",
+                            "Peugeot_EGR", "AGR_ventil"
+                        });
+                        break;
+                    case "Turbo position":
+                        names.AddRange(new[] {
+                            "Position_turbo", "Geometrie_variable", "VGT_position",
+                            "Turbo_geometry", "Variable_geometry", "VNT_position",
+                            "Peugeot_VGT", "Turbolader_position"
+                        });
+                        break;
+                    case "Rail pressure":
+                        names.AddRange(new[] {
+                            "Pression_rampe", "Common_rail", "Pression_rail_carburant",
+                            "Rail_press", "Rampe_pression", "Peugeot_Rail",
+                            "Rail_kraftstoffdruck"
+                        });
+                        break;
+                    case "Fuel temperature":
+                        names.AddRange(new[] {
+                            "Temperature_carburant", "Temp_gasoil", "Temperature_fuel",
+                            "Fuel_temp", "Temp_carburant", "Peugeot_Fuel_Temp",
+                            "Kraftstofftemperatur"
+                        });
+                        break;
+                    case "Air mass":
+                        names.AddRange(new[] {
+                            "Masse_air", "Debit_air", "Mass_air_flow",
+                            "Air_flow", "MAF", "Debit_masse_air",
+                            "Peugeot_MAF", "Luftmassenstrom"
+                        });
+                        break;
+                    case "DPF regeneration":
+                        names.AddRange(new[] {
+                            "Regeneration_FAP", "FAP_regen", "DPF_regen",
+                            "Filtre_particules", "Particulate_filter", "Peugeot_DPF"
+                        });
+                        break;
+                }
+            }
             return names;
         }
 
